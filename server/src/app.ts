@@ -1,13 +1,25 @@
-import express, { Request, Response, NextFunction } from "express";
-import globalErrorHandler from "./middlewares/globalErrorHandler.middleware";
-import createHttpError from "http-errors";
+import express from "express";
+
+import authRouter from "./api/auth/auth.routes";
+import cors from "cors";
+import { errorHandler } from "./middlewares/errorHandler.middleware";
+import cookieParser from "cookie-parser";
+import { config } from "./config/config";
 
 const app = express();
 
-app.get("/err", (req: Request, res: Response, next: NextFunction) => {
-  //   const error = createHttpError(404, "not found");
-  throw createHttpError(406, "not found");
-});
+app.use(
+  cors({
+    origin: config.FRONTEND_URI,
+    credentials: true,
+    exposedHeaders: ["Authorization"],
+  }) 
+);
+app.use(express.json());
+app.use(cookieParser());
 
-app.use(globalErrorHandler);
+// route configuration
+app.use("/api/auth", authRouter);
+
+app.use(errorHandler);
 export { app };
