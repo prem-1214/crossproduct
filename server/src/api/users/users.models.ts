@@ -2,16 +2,15 @@ import mongoose, { Schema, Document } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { config } from "../../config/config";
-import { string } from "zod";
 
 export interface Iuser extends Document {
-  _id: string,
+  _id: string;
   username?: string;
   email: string;
   password: string;
   role: "user" | "seller" | "admin";
   isVerifiedSeller: boolean;
-  refreshtoken: string;
+  refreshtoken?: string;
   // method to compare input password while loging in
   comparePassword(inputPassword: string): Promise<boolean>;
   generateAccessToken(): string;
@@ -50,6 +49,7 @@ const userSchema = new Schema<Iuser>(
     refreshtoken: {
       type: String,
       select: false,
+      default: undefined
     },
   },
   {

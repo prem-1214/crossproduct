@@ -6,6 +6,13 @@ import { User } from "../users/users.models";
 import { LoginInput, RegisterInput } from "../../validations/auth.validation";
 import { config } from "../../config/config";
 
+type cookieOptions = {
+  httpOnly: boolean;
+  secure: boolean;
+  sameSite: "strict";
+  maxAge?: number;
+};
+
 const handleRegister = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body as RegisterInput;
 
@@ -45,12 +52,6 @@ const handleLogin = asyncHandler(async (req: Request, res: Response) => {
 
   await user.save({ validateBeforeSave: false });
 
-  type cookieOptions = {
-    httpOnly: boolean;
-    secure: boolean;
-    sameSite: "strict";
-    maxAge: number;
-  };
   const options: cookieOptions = {
     httpOnly: true,
     secure: config.NODE_ENV === "production",
@@ -68,4 +69,29 @@ const handleLogin = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
-export { handleRegister, handleLogin };
+const handleLogout = asyncHandler(async (req: Request, res: Response) => {
+  // refrshtoken from cookies
+  const refreshToken: string = req.cookies["refresh-token"];
+  // console.log("re", refreshToken)
+
+  if (!refreshToken) throw new AppError("loged out", 401);
+
+  // find user with existing refresh-token
+  const user = await User.findOne({ refreshtoken: refreshToken });
+
+  if (user) {
+    user.refreshtoken = undefined; // set refresh-token undefined in db
+    await user.save({ validateBeforeSave: false });
+  }
+
+  const options: cookieOptions = {
+    httpOnly: true,
+    secure: config.NODE_ENV === "production",
+    sameSite: "strict",
+  };
+  res.clearCookie("refresh-token", options);
+
+  return sendSuccess(res, 200, "Logged out successfully");
+});
+
+export { handleRegister, handleLogin, handleLogout };

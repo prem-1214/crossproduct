@@ -4,7 +4,7 @@ export function sendSuccess(
   res: Response,
   statusCode = 200,
   message: string = "success",
-  data: unknown
+  data?: unknown
 ) {
   res.status(statusCode).json({
     status: "success",
