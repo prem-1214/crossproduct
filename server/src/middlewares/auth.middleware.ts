@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import { asyncHandler } from "../../utils/asyncHandler";
-import { AppError } from "../../utils/AppError";
+import { asyncHandler } from "../utils/asyncHandler";
+import { AppError } from "../utils/AppError";
 import jwt from "jsonwebtoken";
-import { config } from "../../config/config";
-import { Iuser, User } from "../users/users.models";
+import { config } from "../config/config";
+import { Iuser, User } from "../models/users.models";
 
 export interface CustomRequest extends Request {
   user?: Iuser;

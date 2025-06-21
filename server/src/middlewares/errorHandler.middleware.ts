@@ -4,17 +4,19 @@ import { sendError } from "../utils/responseHelper";
 import { ZodError } from "zod";
 
 export function errorHandler(
-  error: Error | AppError,
+  error: unknown,
   req: Request,
   res: Response,
   next: NextFunction
-) {
+): void {
   if (error instanceof AppError) {
-    return sendError(res, error.message, error.statusCode);
+     sendError(res, error.message, error.statusCode);
   } else if (error instanceof ZodError) {
     const zodErrorMessage = error.errors?.map((err) => err.message).join(", ");
-    return sendError(res, zodErrorMessage, 400);
+     sendError(res, zodErrorMessage, 400);
+  } else if (error instanceof Error) {
+     sendError(res, error.message || "Internal server error", 500);
   } else {
-    return sendError(res, "Internal server error", 500);
+     sendError(res, "Unknown error", 500);
   }
 }

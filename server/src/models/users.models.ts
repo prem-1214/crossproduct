@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { config } from "../../config/config";
+import { config } from "../config/config";
 
 export interface Iuser extends Document {
   _id: string;
@@ -49,7 +49,7 @@ const userSchema = new Schema<Iuser>(
     refreshtoken: {
       type: String,
       select: false,
-      default: undefined
+      default: undefined,
     },
   },
   {
@@ -76,7 +76,6 @@ const userSchema = new Schema<Iuser>(
 userSchema.pre("save", async function (this: Iuser, next) {
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 10);
-  console.log("hashed", this.password);
   next();
 });
 
