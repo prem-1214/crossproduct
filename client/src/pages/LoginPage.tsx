@@ -4,6 +4,10 @@ import { InputField } from "../components/UI/InputField";
 import Button from "../components/UI/Button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginInput } from "../schemas/authSchema";
+import { useLoginMutation } from "../features/auth/authApi";
+import { useAppDispatch } from "../store/hooks";
+import { loginSuccess } from "../features/auth/authSlice";
+import { useNavigate } from "react-router-dom";
 
 function LoginPage(): JSX.Element {
   const {
@@ -12,8 +16,27 @@ function LoginPage(): JSX.Element {
     formState: { errors },
   } = useForm<LoginInput>({ resolver: zodResolver(loginSchema) });
 
-  const onsubmit: SubmitHandler<LoginInput> = (data: LoginInput) => {
-    console.log("login Data >>>>", data);
+  const [login] = useLoginMutation();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const onsubmit: SubmitHandler<LoginInput> = async (data: LoginInput) => {
+    try {
+      const response = await login(data).unwrap();
+      const user = response.data?.user;
+      const accessToken = response.data?.accessToken;
+
+      if (!user) {
+        throw new Error("User data not found in response");
+      }
+      console.log("login Data >>>>", response.data);
+      dispatch(loginSuccess({ user, accessToken }));
+      // const localuser = localStorage.getItem("user");
+      // console.log("local user : >>> ", localuser);
+      navigate("/");
+    } catch (error) {
+      console.log("Login failed ", error);
+    }
   };
 
   return (
@@ -23,12 +46,14 @@ function LoginPage(): JSX.Element {
         <InputField
           label="email"
           type="email"
+          placeholder="Enter your email . . ."
           {...register("email")}
           error={errors.email}
         />
         <InputField
           label="password"
           type="password"
+          placeholder="Password"
           {...register("password")}
           error={errors.password}
         />

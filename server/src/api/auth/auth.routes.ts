@@ -16,6 +16,6 @@ router.route("/login").post(validate(loginSchema), handleLogin);
 
 router.route("/logout").get(handleLogout);
 
-router.route("/refrsh-token").post(refreshAccessToken);
+router.route("/refresh-token").get(refreshAccessToken);
 
 export default router;

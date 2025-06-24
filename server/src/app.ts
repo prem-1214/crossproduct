@@ -9,7 +9,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: config.FRONTEND_URI,
+    origin: "http://localhost:5173",
     credentials: true,
     exposedHeaders: ["Authorization"],
   })
@@ -19,7 +19,6 @@ app.use(cookieParser());
 
 // route configuration
 app.use("/api/v1", apiRouter);
-
 
 app.use(errorHandler);
 

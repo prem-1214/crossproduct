@@ -11,7 +11,11 @@ export interface CustomRequest extends Request {
 }
 
 export const authenticate = asyncHandler(
-  async (req: CustomRequest, res: Response, next: NextFunction) => {
+  async (
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response> => {
     const token =
       req.cookies["refresh-token"] || req.headers?.authorization?.split(" ")[1];
 
@@ -32,5 +36,6 @@ export const authenticate = asyncHandler(
     req.token = token;
 
     next();
+    return res;
   }
 );

@@ -12,6 +12,7 @@ type cookieOptions = {
   secure: boolean;
   sameSite: "strict" | "lax" | "none";
   maxAge?: number;
+  path: string;
 };
 
 const handleRegister = asyncHandler(
@@ -45,14 +46,14 @@ const handleLogin = asyncHandler(
 
     if (!user) throw new AppError("Invalid credentials", 401);
 
-    const isPasswordCorrect = user.comparePassword(password);
+    const isPasswordCorrect = await user.comparePassword(password);
 
     if (!isPasswordCorrect) throw new AppError("Password does not match", 401);
 
     const accessToken = user.generateAccessToken();
-    const refreshtoken = user.generateRefreshToken();
+    const refreshToken = user.generateRefreshToken();
 
-    user.refreshtoken = refreshtoken;
+    user.refreshToken = refreshToken;
 
     await user.save({ validateBeforeSave: false });
 
@@ -61,15 +62,20 @@ const handleLogin = asyncHandler(
       secure: config.NODE_ENV === "production",
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/",
     };
 
-    res
-      .cookie("refresh-token", refreshtoken, options)
-      .setHeader("Authorization", `Bearer ${accessToken}`);
+    res.clearCookie("refresh-token", options);
+    res.cookie("refresh-token", refreshToken, options);
 
     return sendSuccess(res, 200, "logged in", {
-      _id: user._id,
-      email: user.email,
+      user: {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      },
+      accessToken: accessToken,
     });
   }
 );
@@ -83,10 +89,10 @@ const handleLogout = asyncHandler(
     if (!refreshToken) throw new AppError("loged out", 401);
 
     // find user with existing refresh-token
-    const user = await User.findOne({ refreshtoken: refreshToken });
+    const user = await User.findOne({ refreshToken: refreshToken });
 
     if (user) {
-      user.refreshtoken = undefined; // set refresh-token undefined in db
+      user.refreshToken = undefined; // set refresh-token undefined in db
       await user.save({ validateBeforeSave: false });
     }
 
@@ -94,6 +100,7 @@ const handleLogout = asyncHandler(
       httpOnly: true,
       secure: config.NODE_ENV === "production",
       sameSite: "strict",
+      path: "/",
     };
     res.clearCookie("refresh-token", options);
 
@@ -106,26 +113,33 @@ const refreshAccessToken = asyncHandler(
     // token from cookies
     const token = req.cookies["refresh-token"];
 
-    if (!token) throw new AppError("Refresh-token missing", 401);
+    if (!token) throw new AppError("RefreshToken missing", 401);
 
-    const decoded = jwt.verify(
-      token,
-      config.REFRESH_TOKEN_SECRET as string
-    ) as {
-      _id: string;
-    };
+    let decoded;
+    try {
+      decoded = jwt.verify(token, config.REFRESH_TOKEN_SECRET as string) as {
+        _id: string;
+      };
+    } catch {
+      throw new AppError("Token expired or invalid", 403);
+    }
 
-    // find user with decoded id
-    const existingUser = await User.findById(decoded._id as string);
+    // select refrshtoken bacuase default select is false in db schema
+    const existingUser = await User.findById(decoded._id as string).select(
+      "+refreshToken"
+    );
+    // console.log("decoded", existingUser);
 
-    if (!existingUser || existingUser.refreshtoken !== token) {
+    if (!existingUser || existingUser.refreshToken !== token) {
       throw new AppError("Invalid refresh token", 403);
     }
 
     // rotate refresh token for security
     const newRefreshToken = existingUser.generateRefreshToken();
-    existingUser.refreshtoken = newRefreshToken;
+    existingUser.refreshToken = newRefreshToken;
     await existingUser.save({ validateBeforeSave: false });
+
+    // console.log("token refreshed", existingUser);
 
     const newAccessToken = existingUser.generateAccessToken();
 
@@ -134,14 +148,18 @@ const refreshAccessToken = asyncHandler(
       secure: config.NODE_ENV === "production",
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/",
     };
 
     // set new token
-    res
-      .cookie("refresh-token", newRefreshToken, options)
-      .setHeader("Authorization", `Bearer ${newAccessToken}`);
+    res.cookie("refresh-token", newRefreshToken, options);
 
     return sendSuccess(res, 200, "Access token refeeshed", {
+      user: {
+        _id: existingUser._id,
+        email: existingUser.email,
+        role: existingUser.role,
+      },
       accessToken: newAccessToken,
     });
   }

@@ -10,7 +10,7 @@ export interface Iuser extends Document {
   password: string;
   role: "user" | "seller" | "admin";
   isVerifiedSeller: boolean;
-  refreshtoken?: string;
+  refreshToken?: string;
   // method to compare input password while loging in
   comparePassword(inputPassword: string): Promise<boolean>;
   generateAccessToken(): string;
@@ -46,7 +46,7 @@ const userSchema = new Schema<Iuser>(
       type: Boolean,
       default: false,
     },
-    refreshtoken: {
+    refreshToken: {
       type: String,
       select: false,
       default: undefined,
