@@ -9,7 +9,7 @@ export interface Iuser extends Document {
   email: string;
   password: string;
   role: "user" | "seller" | "admin";
-  isVerifiedSeller: boolean;
+  isVarifiedSeller: boolean;
   refreshToken?: string;
   // method to compare input password while loging in
   comparePassword(inputPassword: string): Promise<boolean>;
@@ -23,7 +23,6 @@ const userSchema = new Schema<Iuser>(
       type: String,
       unique: true,
       trim: true,
-      default: Date.now,
     },
     email: {
       type: String,
@@ -35,14 +34,14 @@ const userSchema = new Schema<Iuser>(
       type: String,
       required: [true, "Password is required"],
       minlength: 8,
-      select: false, // prevent sending password in response until explicitly mentioned
+      select: false, // prevent sending password in response until explicitly selected
     },
     role: {
       type: String,
       enum: ["user", "seller", "admin"],
       default: "user",
     },
-    isVerifiedSeller: {
+    isVarifiedSeller: {
       type: Boolean,
       default: false,
     },
@@ -94,6 +93,7 @@ userSchema.methods.generateAccessToken = function (this: Iuser): string {
       username: this.username as string,
       email: this.email as string,
       role: this.role as string,
+      isVarifiedSeller: this.isVarifiedSeller as boolean,
     },
     config.ACCESS_TOKEN_SECRET as string,
     { expiresIn: "1h" }

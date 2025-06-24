@@ -5,13 +5,18 @@ type ButtonProps = {
   loading?: boolean;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
-const Button = ({ label, loading, ...props }: ButtonProps): JSX.Element => {
+const Button = ({
+  label,
+  loading,
+  className,
+  ...props
+}: ButtonProps): JSX.Element => {
   return (
     <div>
       <button
         {...props}
         disabled={loading}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded disabled:opacity-50 "
+        className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded disabled:opacity-50 ${className}`}
       >
         {loading ? "Processing" : label}
       </button>

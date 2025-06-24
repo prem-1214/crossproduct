@@ -12,11 +12,13 @@ export const InputField = ({
   ...props
 }: InputFieldProps): JSX.Element => {
   return (
-    <div className="mb-4">
-      {label && <label className="block font-medium mb-1">{label}</label>}
+    <div className="mb-4 ">
+      {label && (
+        <label className=" text-lg mb-3 flex justify-center ">{label}</label>
+      )}
       <input
         {...props}
-        className={`w-full border rounded outline-none focus:ring-2 focus:ring-blue-500 ${error ? "border-red-500" : "border-gray-300"}`}
+        className={`w-full border outline-none text-center border-t-0 border-x-0 border-b-black ${error ? "border-red-500" : "border-gray-300"}`}
       />
       {error && <p className="text-red-500 text-sm mt-1">{error.message}</p>}
     </div>

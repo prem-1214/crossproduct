@@ -5,6 +5,7 @@ export interface User {
   username?: string;
   email: string;
   role: "user" | "seller" | "admin";
+  isVarifiedSeller: boolean;
 }
 
 interface AuthState {

@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import Button from "../components/UI/Button";
 import { useLogoutMutation } from "../features/auth/authApi";
@@ -21,27 +21,68 @@ function Navbar() {
   };
 
   return (
-    <nav className="bg-white shadow p-4 flex justify-between items-center">
-      <Link to="/" className="text-xl font-bold text-blue-600">
-        CrossProduct
-      </Link>
-
-      <div className="space-x-8">
-        {!isAuthenticated ? (
+    <nav className="flex items-center justify-around m-5">
+      <div className="text-2xl font-bold">
+        <NavLink to={"/"}>Cross Product</NavLink>
+      </div>
+      <ul className="flex items-center gap-16">
+        {!isAuthenticated && (
           <>
-            <Link to="/login">Login</Link>
-            <Link to="/register">Register</Link>
-          </>
-        ) : (
-          <>
-            <Link to="/dashboard">DashBoard</Link>
-            {user?.role === "admin" && (
-              <Link to="/admin-dashboard">Admin Dashboard</Link>
-            )}
-            <Button label="Logout" onClick={handleLogout} />
+            <NavLink to={"/login"}>Login</NavLink>
+            <NavLink to={"/register"}>Register</NavLink>
           </>
         )}
-      </div>
+
+        {isAuthenticated &&
+          user?.role === "user" &&
+          !user?.isVarifiedSeller && (
+            <>
+              <NavLink to={"/products"}>Products</NavLink>
+              <NavLink to={"/orders"}>Orders</NavLink>
+              <NavLink to={"/cart"}>Cart</NavLink>
+              <NavLink to={"/profile"}>Profile</NavLink>
+              <Button
+                label="Logout"
+                type="submit"
+                onClick={handleLogout}
+                className={`bg-red-500 hover:bg-red-600 cursor-pointer rounded-3xl`}
+              />
+            </>
+          )}
+
+        {isAuthenticated &&
+          user?.role === "seller" &&
+          user.isVarifiedSeller === true && (
+            <>
+              <NavLink to={"/dashboard"}>Dashboard</NavLink>
+              <NavLink to={"/my-products"}>My Products</NavLink>
+              <NavLink to={"/add-products"}>Add Products</NavLink>
+              <NavLink to={"/orders"}>Orders</NavLink>
+              <NavLink to={"/profile"}>Profile</NavLink>
+              <Button
+                label="Logout"
+                type="submit"
+                onClick={handleLogout}
+                className={`bg-red-500 hover:bg-red-600 cursor-pointer rounded-3xl`}
+              />
+            </>
+          )}
+
+        {isAuthenticated && user?.role === "admin" && (
+          <>
+            <NavLink to={"/admin/dashboard"}>Dashboard</NavLink>
+            <NavLink to={"/admin/users"}>Manage Users</NavLink>
+            <NavLink to={"/admin/products"}>All products</NavLink>
+            <NavLink to={"/admin/orders"}>All Orders</NavLink>
+            <Button
+              label="Logout"
+              type="submit"
+              onClick={handleLogout}
+              className={`bg-red-500 hover:bg-red-600 cursor-pointer rounded-3xl`}
+            />
+          </>
+        )}
+      </ul>
     </nav>
   );
 }

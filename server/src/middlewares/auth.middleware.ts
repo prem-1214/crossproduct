@@ -4,6 +4,7 @@ import { AppError } from "../utils/AppError";
 import jwt from "jsonwebtoken";
 import { config } from "../config/config";
 import { Iuser, User } from "../models/users.models";
+import { sendError } from "../utils/responseHelper";
 
 export interface CustomRequest extends Request {
   user?: Iuser;
@@ -34,6 +35,13 @@ export const authenticate = asyncHandler(
 
     req.user = user;
     req.token = token;
+
+    const allowedRoles: Array<string> = ["user", "seller", "admin"];
+    const userRole = req.user?.role;
+
+    if (!userRole || !allowedRoles.includes(userRole)) {
+      sendError(res, "Forbidden: Insufficient role", 403);
+    }
 
     next();
     return res;

@@ -74,6 +74,7 @@ const handleLogin = asyncHandler(
         username: user.username,
         email: user.email,
         role: user.role,
+        isVarifiedSeller: user.isVarifiedSeller,
       },
       accessToken: accessToken,
     });
@@ -159,6 +160,7 @@ const refreshAccessToken = asyncHandler(
         _id: existingUser._id,
         email: existingUser.email,
         role: existingUser.role,
+        isVarifiedSeller: existingUser.isVarifiedSeller,
       },
       accessToken: newAccessToken,
     });
