@@ -15,7 +15,7 @@ type cookieOptions = {
   path: string;
 };
 
-const handleRegister = asyncHandler(
+const registerHandler = asyncHandler(
   async (req: Request, res: Response): Promise<Response> => {
     const { email, password } = req.body as RegisterInput;
 
@@ -38,7 +38,7 @@ const handleRegister = asyncHandler(
   }
 );
 
-const handleLogin = asyncHandler(
+const loginHandler = asyncHandler(
   async (req: Request, res: Response): Promise<Response> => {
     const { email, password } = req.body as LoginInput;
 
@@ -81,7 +81,7 @@ const handleLogin = asyncHandler(
   }
 );
 
-const handleLogout = asyncHandler(
+const logoutHandler = asyncHandler(
   async (req: Request, res: Response): Promise<Response> => {
     // refrshtoken from cookies
     const refreshToken: string = req.cookies["refresh-token"];
@@ -109,7 +109,7 @@ const handleLogout = asyncHandler(
   }
 );
 
-const refreshAccessToken = asyncHandler(
+const refreshAccessTokenHAndler = asyncHandler(
   async (req: Request, res: Response): Promise<Response> => {
     // token from cookies
     const token = req.cookies["refresh-token"];
@@ -167,4 +167,9 @@ const refreshAccessToken = asyncHandler(
   }
 );
 
-export { handleRegister, handleLogin, handleLogout, refreshAccessToken };
+export {
+  registerHandler,
+  loginHandler,
+  logoutHandler,
+  refreshAccessTokenHAndler,
+};

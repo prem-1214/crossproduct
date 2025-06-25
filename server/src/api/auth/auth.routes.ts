@@ -1,21 +1,21 @@
 import { Router } from "express";
 import {
-  handleRegister,
-  handleLogin,
-  handleLogout,
-  refreshAccessToken,
+  registerHandler,
+  loginHandler,
+  logoutHandler,
+  refreshAccessTokenHAndler,
 } from "./auth.controller";
 import { validate } from "../../validations/zodValidation.middleware";
 import { loginSchema, registerSchema } from "../../validations/auth.validation";
 
 const router = Router();
 
-router.route("/register").post(validate(registerSchema), handleRegister);
+router.route("/register").post(validate(registerSchema), registerHandler);
 
-router.route("/login").post(validate(loginSchema), handleLogin);
+router.route("/login").post(validate(loginSchema), loginHandler);
 
-router.route("/logout").get(handleLogout);
+router.route("/logout").get(logoutHandler);
 
-router.route("/refresh-token").get(refreshAccessToken);
+router.route("/refresh-token").get(refreshAccessTokenHAndler);
 
 export default router;

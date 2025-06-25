@@ -36,14 +36,19 @@ export const authenticate = asyncHandler(
     req.user = user;
     req.token = token;
 
-    const allowedRoles: Array<string> = ["user", "seller", "admin"];
-    const userRole = req.user?.role;
-
-    if (!userRole || !allowedRoles.includes(userRole)) {
-      sendError(res, "Forbidden: Insufficient role", 403);
-    }
-
     next();
     return res;
   }
 );
+
+export const checkRole =
+  (...roles: Array<"user" | "seller" | "admin">) =>
+  (req: CustomRequest, res: Response, next: NextFunction) => {
+    const role = req?.user?.role;
+
+    if (!role || !roles.includes(role)) {
+      sendError(res, "Forbidden: Insufficient role", 403);
+    }
+
+    next();
+  };
