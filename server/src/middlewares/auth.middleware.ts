@@ -19,7 +19,7 @@ export const authenticate = asyncHandler(
   ): Promise<Response> => {
     const token = req.cookies["refresh-token"];
     // req.headers?.authorization?.split(" ")[1];
-    console.log("header token>>>", req.headers);
+    // console.log("header token>>>", req.headers);
 
     if (!token) throw new AppError("Unauthorized", 401);
 
