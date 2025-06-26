@@ -14,7 +14,7 @@ router.route("/register").post(validate(registerSchema), registerHandler);
 
 router.route("/login").post(validate(loginSchema), loginHandler);
 
-router.route("/logout").get(logoutHandler);
+router.route("/logout").post(logoutHandler);
 
 router.route("/refresh-token").get(refreshAccessTokenHAndler);
 

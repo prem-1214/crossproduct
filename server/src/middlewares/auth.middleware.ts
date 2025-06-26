@@ -17,12 +17,13 @@ export const authenticate = asyncHandler(
     res: Response,
     next: NextFunction
   ): Promise<Response> => {
-    const token =
-      req.cookies["refresh-token"] || req.headers?.authorization?.split(" ")[1];
+    const token = req.cookies["refresh-token"];
+    // req.headers?.authorization?.split(" ")[1];
+    console.log("header token>>>", req.headers);
 
     if (!token) throw new AppError("Unauthorized", 401);
 
-    const decoded = jwt.verify(token, config.ACCESS_TOKEN_SECRET as string) as {
+    const decoded = jwt.verify(token, config.REFRESH_TOKEN_SECRET as string) as {
       _id: string;
     };
 

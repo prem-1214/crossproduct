@@ -30,7 +30,7 @@ function LoginPage(): JSX.Element {
       if (!user) {
         throw new Error("User data not found in response");
       }
-      console.log("login Data >>>>", response.data);
+      console.log("login Data >>>>", response.data.accessToken);
       dispatch(loginSuccess({ user, accessToken }));
       // const localuser = localStorage.getItem("user");
       // console.log("local user : >>> ", localuser);

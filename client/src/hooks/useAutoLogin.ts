@@ -11,9 +11,14 @@ export const useAutoLogin = () => {
     const checkSession = async (): Promise<void> => {
       try {
         const response = await refreshToken().unwrap();
-        console.log("user");
         const { user, accessToken } = response.data;
-        dispatch(loginSuccess({ user, accessToken }));
+        dispatch(
+          loginSuccess({
+            user,
+            accessToken,
+          })
+        );
+        console.log("user ...", accessToken);
       } catch (error) {
         console.log("Auto-login failed", error);
       }

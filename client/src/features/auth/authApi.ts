@@ -1,8 +1,6 @@
-import { fetchBaseQuery } from "@reduxjs/toolkit/query";
-import { createApi } from "@reduxjs/toolkit/query/react";
-import type { User } from "./authSlice";
+import type { User } from "../user/user.types";
 import type { LoginInput, RegisterInput } from "../../schemas/authSchema";
-import type { RootState } from "../../store/store";
+import { api } from "../api";
 
 interface AuthResponse {
   data: {
@@ -11,19 +9,7 @@ interface AuthResponse {
   };
 }
 
-export const authApi = createApi({
-  reducerPath: "authApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_API_URL,
-    credentials: "include",
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.accessToken;
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+export const authApi = api.injectEndpoints({
   endpoints: (builder) => ({
     login: builder.mutation<AuthResponse, LoginInput>({
       query: (data) => ({
@@ -42,7 +28,7 @@ export const authApi = createApi({
     logout: builder.mutation<{ message: string }, void>({
       query: () => ({
         url: "/auth/logout",
-        method: "GET",
+        method: "POST",
         credentials: "include",
       }),
     }),
@@ -54,6 +40,7 @@ export const authApi = createApi({
       }),
     }),
   }),
+  overrideExisting: false,
 });
 
 export const {

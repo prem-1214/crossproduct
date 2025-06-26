@@ -11,6 +11,7 @@ import Layout from "../layouts/Layout";
 import { useAutoLogin } from "../hooks/useAutoLogin";
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 import RoleGuard from "../components/auth/RoleGuard";
+import AdminUsersPage from "../pages/admin/AdminUsersPage";
 
 const router = createBrowserRouter(
   createRoutesFromChildren(
@@ -35,7 +36,7 @@ const router = createBrowserRouter(
           </Route>
           <Route element={<RoleGuard allowedRoles={["admin"]} />}>
             <Route path="/admin/dashboard" />
-            <Route path="/admin/users" />
+            <Route path="/admin/users" element={<AdminUsersPage />} />
             <Route path="/admin/products" />
             <Route path="/admin/orders" />
           </Route>
