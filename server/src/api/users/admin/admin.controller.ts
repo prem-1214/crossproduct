@@ -6,8 +6,19 @@ import { AppError } from "../../../utils/AppError";
 
 const getAllUserListHandler = asyncHandler(
   async (req: Request, res: Response): Promise<Response> => {
-    const allUsers = await User.find(); // this will fetch all the users from db
-    const response = allUsers.map((user) => user);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 50;
+
+    const skip = (page - 1) * 50;
+
+    const total = await User.countDocuments(); //fetch total documents from db
+    const users = await User.find().skip(skip).limit(limit).lean(); // fetch all the users from db with provided limit
+    const response = {
+      users,
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+    };
 
     return sendSuccess(res, 200, "All Users fetched", response);
   }

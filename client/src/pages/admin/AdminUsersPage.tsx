@@ -4,28 +4,30 @@ import {
   useDeleteUserMutation,
   useGetAllUsersQuery,
   useUpdateUserMutation,
-} from "../../features/user/userApi";
+} from "../../features/user/adminApi";
 import type { User } from "../../features/user/user.types";
 import { Dialog } from "@headlessui/react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { updateUserSchema } from "../../schemas/updateSchema";
+import ConfirmModal from "../../components/UI/CofirmModel";
 
-// Zod schema
-const updateUserSchema = z.object({
-  email: z.string().email(),
-  role: z.enum(["user", "seller", "admin"]),
-});
 type UpdateUserInput = z.infer<typeof updateUserSchema>;
 
 function AdminUsersPage() {
-  const { data: users, isLoading, refetch } = useGetAllUsersQuery();
+  const [page, setPage] = useState(1);
+  const { data: response, isLoading, refetch } = useGetAllUsersQuery({ page });
+
+  const totalPages = response?.data.pages || 1;
+  // const users = response?.data.users || [];
 
   const [deleteUser] = useDeleteUserMutation();
   const [updateUser] = useUpdateUserMutation();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
   const {
     register,
@@ -64,6 +66,18 @@ function AdminUsersPage() {
       console.error("Error updating user", error);
     }
   };
+  const handleDeleteConfirm = async (selectedUserId: string) => {
+    if (!selectedUserId) return;
+    try {
+      await deleteUser(selectedUserId).unwrap();
+      setSelectedUserId(null);
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  };
+
+  const handlePrev = () => setPage((p) => Math.max(p - 1, 1));
+  const handleNext = () => setPage((p) => Math.max(p + 1, totalPages));
 
   if (isLoading) return <h2>Loading users ...</h2>;
 
@@ -74,9 +88,9 @@ function AdminUsersPage() {
       <div className="flex justify-end pr-10 mb-2">
         <button
           onClick={() => refetch()}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
+          className="text-3xl text-white px-3 py-1 rounded"
         >
-          &#x27F3;
+          🔄️
         </button>
       </div>
 
@@ -86,31 +100,52 @@ function AdminUsersPage() {
             <th className="p-2">#</th>
             <th className="p-2">Email</th>
             <th className="p-2">Role</th>
-            <th className="p-2">Action</th>
+            <th className="p-2 text-center">Action</th>
           </tr>
         </thead>
         <tbody>
-          {users?.data.map((user, index) => (
+          {response?.data.users.map((user, index) => (
             <tr key={user._id} className="border-b">
-              <td className="p-2">{index + 1}</td>
+              <td className="p-2">{(page - 1) * 50 + index + 1}</td>
               <td className="p-2">{user.email}</td>
               <td className="p-2">{user.role}</td>
-              <td className="p-2 flex gap-2">
+              <td className="p-2 flex justify-around">
                 <Button
                   label="Edit"
                   onClick={() => openEditModal(user)}
-                  className="bg-yellow-400 text-black rounded w-[60px]"
+                  className="bg-blue-400 hover:bg-blue-600 text-black rounded w-[60px]"
                 />
                 <Button
                   label="Delete"
-                  onClick={() => handleDeleteUser(user._id)}
-                  className="bg-red-400 text-black rounded w-[60px]"
+                  onClick={() => setSelectedUserId(user._id)}
+                  className="bg-red-400 hover:bg-red-600 text-black rounded w-[60px]"
                 />
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      <div className="flex justify-center text-lg  ">
+        <div className="flex justify-end gap-4 mt-4 ">
+          <button
+            onClick={handlePrev}
+            disabled={page === 1}
+            className="cursor-pointer"
+          >
+            {"<<"}
+          </button>
+          <span>
+            Page {page} of {totalPages}
+          </span>
+          <button
+            onClick={handleNext}
+            disabled={page === totalPages}
+            className="cursor-pointer"
+          >
+            {">>"}
+          </button>
+        </div>
+      </div>
 
       {/* Edit Modal */}
       <Dialog open={isModalOpen} onClose={closeModal} className="relative z-50">
@@ -166,6 +201,14 @@ function AdminUsersPage() {
           </Dialog.Panel>
         </div>
       </Dialog>
+
+      {selectedUserId && (
+        <ConfirmModal
+          message={`Are you sure you want to delete this user?`}
+          onConfirm={() => handleDeleteConfirm(selectedUserId)}
+          onCancel={() => setSelectedUserId(null)}
+        />
+      )}
     </div>
   );
 }

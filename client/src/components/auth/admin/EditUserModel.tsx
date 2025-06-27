@@ -2,7 +2,7 @@ import { Dialog } from "@headlessui/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { updateUserSchema } from "../../../schemas/updateSchema";
-import { useUpdateUserMutation } from "../../../features/user/userApi";
+import { useUpdateUserMutation } from "../../../features/user/adminApi";
 import type { User } from "../../../features/user/user.types";
 import { useEffect } from "react";
 import type { z } from "zod";

@@ -3,9 +3,22 @@ import type { User } from "./user.types";
 
 export const adminApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getAllUsers: builder.query<{ data: User[] }, void>({
-      query: () => ({
-        url: "/admin/users",
+    getAllUsers: builder.query<
+      {
+        data: {
+          users: User[];
+          total: number;
+          page: number;
+          pages: number;
+        };
+      },
+      {
+        page?: number;
+        limit?: number;
+      }
+    >({
+      query: ({ page = 1, limit = 50 }) => ({
+        url: `/admin/users?page=${page}&limit=${limit}`,
       }),
       providesTags: ["Users"],
     }),
@@ -20,13 +33,17 @@ export const adminApi = api.injectEndpoints({
       }),
       async onQueryStarted({ id, data }, { dispatch, queryFulfilled }) {
         const patchResult = dispatch(
-          adminApi.util.updateQueryData("getAllUsers", undefined, (draft) => {
-            const user = draft.data.find((user) => user._id === id);
+          adminApi.util.updateQueryData(
+            "getAllUsers",
+            { page: 1, limit: 50 },
+            (draft) => {
+              const user = draft.data.users.find((user) => user._id === id);
 
-            if (user) {
-              Object.assign(user, data);
+              if (user) {
+                Object.assign(user, data);
+              }
             }
-          })
+          )
         );
         try {
           await queryFulfilled;
@@ -44,14 +61,12 @@ export const adminApi = api.injectEndpoints({
       }),
       async onQueryStarted(id, { dispatch, queryFulfilled }) {
         const pachResult = dispatch(
-          adminApi.util.updateQueryData(
-            "getAllUsers",
-            undefined,
-            (draft: { data: User[] }) => {
-              console.log("draft data", draft.data);
-              draft.data = draft.data.filter((user) => user._id !== id);
-            }
-          )
+          adminApi.util.updateQueryData("getAllUsers", {}, (draft) => {
+            console.log("draft data", draft.data.users);
+            draft.data.users = draft.data.users.filter(
+              (user) => user._id !== id
+            );
+          })
         );
         try {
           await queryFulfilled;
