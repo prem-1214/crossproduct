@@ -11,12 +11,12 @@ export interface CustomRequest extends Request {
   token?: string;
 }
 
-export const authenticate = asyncHandler(
-  async (
-    req: CustomRequest,
-    res: Response,
-    next: NextFunction
-  ): Promise<Response> => {
+export const authenticate = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
     const token = req.cookies["refresh-token"];
     // req.headers?.authorization?.split(" ")[1];
     // console.log("header token>>>", req.headers);
@@ -38,9 +38,10 @@ export const authenticate = asyncHandler(
     req.token = token;
 
     next();
-    return res;
+  } catch (error) {
+    next(error);
   }
-);
+};
 
 export const checkRole =
   (...roles: Array<"user" | "seller" | "admin">) =>

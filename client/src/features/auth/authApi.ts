@@ -1,5 +1,5 @@
 import type { User } from "../user/user.types";
-import type { LoginInput, RegisterInput } from "../../schemas/authSchema";
+import type { LoginInput, RegisterInput } from "./authSchema";
 import { api } from "../api";
 
 interface AuthResponse {

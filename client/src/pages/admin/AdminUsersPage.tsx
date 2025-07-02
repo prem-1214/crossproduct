@@ -10,7 +10,7 @@ import { Dialog } from "@headlessui/react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { updateUserSchema } from "../../schemas/updateSchema";
+import { updateUserSchema } from "../../features/user/updateSchema";
 import ConfirmModal from "../../components/UI/CofirmModel";
 
 type UpdateUserInput = z.infer<typeof updateUserSchema>;
@@ -40,7 +40,11 @@ function AdminUsersPage() {
 
   const openEditModal = (user: User) => {
     setSelectedUser(user);
-    reset({ email: user.email, role: user.role });
+    reset({
+      email: user.email,
+      role: user.role,
+      isVarifiedSeller: user.isVarifiedSeller,
+    });
     setIsModalOpen(true);
   };
 
@@ -49,18 +53,16 @@ function AdminUsersPage() {
     setSelectedUser(null);
   };
 
-  const handleDeleteUser = async (id: string) => {
-    try {
-      await deleteUser(id).unwrap();
-    } catch (error) {
-      console.log("Error deleting user: ", error);
-    }
-  };
-
   const onSubmit = async (data: UpdateUserInput) => {
     if (!selectedUser) return;
     try {
-      await updateUser({ id: selectedUser._id, data: data }).unwrap();
+      const isVarifiedSeller = data.role.includes("seller")
+        ? (data.isVarifiedSeller = true)
+        : (data.isVarifiedSeller = false);
+      await updateUser({
+        id: selectedUser._id,
+        data: { ...data, isVarifiedSeller },
+      }).unwrap();
       closeModal();
     } catch (error) {
       console.error("Error updating user", error);

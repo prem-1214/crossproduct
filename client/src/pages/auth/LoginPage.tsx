@@ -3,7 +3,7 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { InputField } from "../../components/UI/InputField";
 import Button from "../../components/UI/Button";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema, type LoginInput } from "../../schemas/authSchema";
+import { loginSchema, type LoginInput } from "../../features/auth/authSchema";
 import { useLoginMutation } from "../../features/auth/authApi";
 import { useAppDispatch } from "../../store/hooks";
 import { loginSuccess } from "../../features/auth/authSlice";

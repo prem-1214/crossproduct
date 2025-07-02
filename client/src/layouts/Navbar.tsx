@@ -22,7 +22,7 @@ const Navbar: FC = () => {
   };
 
   const navLinkClass = ({ isActive }: { isActive: boolean }): string =>
-    isActive ? "text-lg text-red-400" : "text-gray-500";
+    isActive ? "font-bold text-red-400" : "text-gray-500";
 
   return (
     <nav className="flex items-center justify-around m-5">
@@ -49,7 +49,7 @@ const Navbar: FC = () => {
               <NavLink to="/products" className={navLinkClass}>
                 Products
               </NavLink>
-              <NavLink to="/orders" className={navLinkClass}>
+              <NavLink to="/my-orders" className={navLinkClass}>
                 Orders
               </NavLink>
               <NavLink to="/cart" className={navLinkClass}>
@@ -77,8 +77,8 @@ const Navbar: FC = () => {
               <NavLink to="/my-products" className={navLinkClass}>
                 My Products
               </NavLink>
-              <NavLink to="/add-products" className={navLinkClass}>
-                Add Products
+              <NavLink to="/seller/add-product" className={navLinkClass}>
+                Add Product
               </NavLink>
               <NavLink to="/orders" className={navLinkClass}>
                 Orders
@@ -108,6 +108,9 @@ const Navbar: FC = () => {
             </NavLink>
             <NavLink to="/admin/orders" className={navLinkClass}>
               All Orders
+            </NavLink>
+            <NavLink to="/profile" className={navLinkClass}>
+              Profile
             </NavLink>
             <Button
               label="Logout"

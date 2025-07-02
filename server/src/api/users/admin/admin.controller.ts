@@ -43,13 +43,14 @@ const deleteUserHandler = asyncHandler(
 const updateUserHandler = asyncHandler(
   async (req: Request, res: Response): Promise<Response> => {
     const { id } = req.params;
-    const { email, role } = req.body;
+    const { email, role, isVarifiedSeller } = req.body;
 
     const user = await User.findById(id);
 
     if (user) {
       user.email = email;
       user.role = role;
+      user.isVarifiedSeller = isVarifiedSeller;
     }
 
     const updatedUser = await user?.save();

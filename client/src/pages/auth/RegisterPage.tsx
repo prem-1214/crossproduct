@@ -3,7 +3,10 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { InputField } from "../../components/UI/InputField";
 import Button from "../../components/UI/Button";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registerSchema, type RegisterInput } from "../../schemas/authSchema";
+import {
+  registerSchema,
+  type RegisterInput,
+} from "../../features/auth/authSchema";
 import { useRegisterMutation } from "../../features/auth/authApi";
 import { useAppDispatch } from "../../store/hooks";
 import { NavLink, useNavigate } from "react-router-dom";

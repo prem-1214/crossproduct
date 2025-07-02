@@ -24,7 +24,12 @@ export const adminApi = api.injectEndpoints({
     }),
     updateUser: builder.mutation<
       { data: User[] },
-      { id: string; data: Partial<Pick<User, "email" | "username" | "role">> }
+      {
+        id: string;
+        data: Partial<
+          Pick<User, "email" | "username" | "role" | "isVarifiedSeller">
+        >;
+      }
     >({
       query: ({ id, data }) => ({
         url: `/admin/users/${id}`,

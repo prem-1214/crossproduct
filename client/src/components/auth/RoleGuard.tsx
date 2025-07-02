@@ -1,4 +1,4 @@
-import { Navigate, NavLink, Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { useAppSelector } from "../../store/hooks";
 
 interface RoleGuardProps {
@@ -8,9 +8,9 @@ interface RoleGuardProps {
 function RoleGuard({ allowedRoles }: RoleGuardProps) {
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
 
-  if (!isAuthenticated || !user) return <NavLink to={"/login"} replace />;
+  if (!isAuthenticated || !user) return <Navigate to={"/login"} replace />;
   if (!allowedRoles.includes(user.role))
-    return <Navigate to={"/unauthorized"} replace />;
+    return <Navigate to={"/login"} replace />;
 
   return <Outlet />;
 }
