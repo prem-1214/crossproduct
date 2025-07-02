@@ -14,6 +14,7 @@ const Navbar: FC = () => {
   const handleLogout = async (): Promise<void> => {
     try {
       await logoutApi().unwrap();
+      console.log("log out................");
       dispatch(logout());
       navigate("/login");
     } catch (error) {
@@ -46,7 +47,7 @@ const Navbar: FC = () => {
           user?.role === "user" &&
           !user?.isVarifiedSeller && (
             <>
-              <NavLink to="/products" className={navLinkClass}>
+              <NavLink to="/user/products" className={navLinkClass}>
                 Products
               </NavLink>
               <NavLink to="/my-orders" className={navLinkClass}>
@@ -60,7 +61,7 @@ const Navbar: FC = () => {
               </NavLink>
               <Button
                 label="Logout"
-                type="submit"
+                type="button"
                 onClick={handleLogout}
                 className="bg-red-500 hover:bg-red-600 cursor-pointer rounded-3xl"
               />
@@ -71,10 +72,10 @@ const Navbar: FC = () => {
           user?.role === "seller" &&
           user?.isVarifiedSeller === true && (
             <>
-              <NavLink to="/dashboard" className={navLinkClass}>
+              <NavLink to="/seller/dashboard" className={navLinkClass}>
                 Dashboard
               </NavLink>
-              <NavLink to="/my-products" className={navLinkClass}>
+              <NavLink to="/seller/my-products" className={navLinkClass}>
                 My Products
               </NavLink>
               <NavLink to="/seller/add-product" className={navLinkClass}>
@@ -88,7 +89,7 @@ const Navbar: FC = () => {
               </NavLink>
               <Button
                 label="Logout"
-                type="submit"
+                type="button"
                 onClick={handleLogout}
                 className="bg-red-500 hover:bg-red-600 cursor-pointer rounded-3xl"
               />
@@ -114,7 +115,7 @@ const Navbar: FC = () => {
             </NavLink>
             <Button
               label="Logout"
-              type="submit"
+              type="button"
               onClick={handleLogout}
               className="bg-red-500 hover:bg-red-600 cursor-pointer rounded-3xl"
             />

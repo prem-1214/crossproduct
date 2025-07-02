@@ -37,13 +37,25 @@ export const addProduct = asyncHandler(async (req: Request, res: Response) => {
   return sendSuccess(res, 201, "Product created successfully", product);
 });
 
+// specific to seller only (seller)
+export const getmyProducts = asyncHandler(
+  async (req: Request, res: Response) => {
+    const seller = req.user?._id as string;
+    console.log("seller", seller);
+    if (!seller) throw new AppError("seller not found", 500);
+    const myProducts = await Product.find({ seller: seller });
+    console.log("myProducts ...", myProducts);
+
+    return sendSuccess(res, 200, "all products fetched", myProducts);
+  }
+);
 
 // Get all products (public)
 export const getAllProducts = asyncHandler(
   async (req: Request, res: Response) => {
     const page = parseInt(req.params.page as string) || 1;
-    const limit = parseInt(req.params.limit as string) || 6;
-    const skip = (page - 1) * 6;
+    const limit = parseInt(req.params.limit as string) || 30;
+    const skip = (page - 1) * 30;
 
     // fetch total products by counting the entries
     const total = await Product.countDocuments();

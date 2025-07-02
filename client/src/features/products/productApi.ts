@@ -3,6 +3,21 @@ import type { Product, UpdateProductInput } from "./product.types";
 
 const productApi = api.injectEndpoints({
   endpoints: (builder) => ({
+    addProduct: builder.mutation<{ data: Product }, FormData>({
+      query: (formData) => ({
+        url: "/product/add-product",
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: ["Product"],
+    }),
+
+    getMyProducts: builder.query<{ data: Product[] }, void>({
+      query: () => ({
+        url: "/product/my-products",
+      }),
+      providesTags: ["Product"],
+    }),
     getAllProducts: builder.query<
       {
         data: {
@@ -18,22 +33,12 @@ const productApi = api.injectEndpoints({
       }
     >({
       // You need to provide a query function here, e.g.:
-      query: ({ page = 1, limit = 5 } = {}) => ({
+      query: ({ page = 1, limit = 30 } = {}) => ({
         url: `/product?page=${page}&limit=${limit}`,
       }),
       providesTags: ["Product"],
     }),
 
-    addProduct: builder.mutation<{ data: Product }, FormData>({
-      query: (formData) => ({
-        url: "/product/add-product",
-        method: "POST",
-        body: formData,
-      }),
-      invalidatesTags: ["Product"],
-    }),
-
-    
     getProductById: builder.query<{ data: Product }, string>({
       query: (id) => ({
         url: `/product/${id}`,
@@ -66,5 +71,6 @@ export const {
   useGetAllProductsQuery,
   useAddProductMutation,
   useGetProductByIdQuery,
+  useGetMyProductsQuery,
   useDeleteProductMutation,
 } = productApi;

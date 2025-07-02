@@ -12,6 +12,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { updateUserSchema } from "../../features/user/updateSchema";
 import ConfirmModal from "../../components/UI/CofirmModel";
+import Pagination from "../../components/UI/Pagination";
 
 type UpdateUserInput = z.infer<typeof updateUserSchema>;
 
@@ -128,25 +129,12 @@ function AdminUsersPage() {
         </tbody>
       </table>
       <div className="flex justify-center text-lg  ">
-        <div className="flex justify-end gap-4 mt-4 ">
-          <button
-            onClick={handlePrev}
-            disabled={page === 1}
-            className="cursor-pointer"
-          >
-            {"<<"}
-          </button>
-          <span>
-            Page {page} of {totalPages}
-          </span>
-          <button
-            onClick={handleNext}
-            disabled={page === totalPages}
-            className="cursor-pointer"
-          >
-            {">>"}
-          </button>
-        </div>
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPrev={handlePrev}
+          onNext={handleNext}
+        />
       </div>
 
       {/* Edit Modal */}

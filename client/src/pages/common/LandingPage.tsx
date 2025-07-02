@@ -1,90 +1,400 @@
 import { Link } from "react-router-dom";
 import { useGetAllProductsQuery } from "../../features/products/productApi";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogBackdrop,
+  DialogPanel,
+  Disclosure,
+  DisclosureButton,
+  DisclosurePanel,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+} from "@headlessui/react";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronDownIcon,
+  FunnelIcon,
+  MinusIcon,
+  PlusIcon,
+  Squares2X2Icon,
+} from "@heroicons/react/20/solid";
 
+const sortOptions = [
+  { name: "Most Popular", href: "#", current: true },
+  { name: "Best Rating", href: "#", current: false },
+  { name: "Newest", href: "#", current: false },
+  { name: "Price: Low to High", href: "#", current: false },
+  { name: "Price: High to Low", href: "#", current: false },
+];
+const subCategories = [
+  { name: "Totes", href: "#" },
+  { name: "Backpacks", href: "#" },
+  { name: "Travel Bags", href: "#" },
+  { name: "Hip Bags", href: "#" },
+  { name: "Laptop Sleeves", href: "#" },
+];
+const filters = [
+  {
+    id: "color",
+    name: "Color",
+    options: [
+      { value: "white", label: "White", checked: false },
+      { value: "beige", label: "Beige", checked: false },
+      { value: "blue", label: "Blue", checked: true },
+      { value: "brown", label: "Brown", checked: false },
+      { value: "green", label: "Green", checked: false },
+      { value: "purple", label: "Purple", checked: false },
+    ],
+  },
+  {
+    id: "category",
+    name: "Category",
+    options: [
+      { value: "new-arrivals", label: "New Arrivals", checked: false },
+      { value: "sale", label: "Sale", checked: false },
+      { value: "travel", label: "Travel", checked: true },
+      { value: "organization", label: "Organization", checked: false },
+      { value: "accessories", label: "Accessories", checked: false },
+    ],
+  },
+  {
+    id: "size",
+    name: "Size",
+    options: [
+      { value: "2l", label: "2L", checked: false },
+      { value: "6l", label: "6L", checked: false },
+      { value: "12l", label: "12L", checked: false },
+      { value: "18l", label: "18L", checked: false },
+      { value: "20l", label: "20L", checked: false },
+      { value: "40l", label: "40L", checked: true },
+    ],
+  },
+];
+
+function classNames(...classes: (string | undefined | null | false)[]): string {
+  return classes.filter(Boolean).join(" ");
+}
 function LandingPage() {
   const { data: response, isLoading, refetch } = useGetAllProductsQuery();
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {response?.data.products.map((product) => (
-          <div
-            key={product._id}
-            className="relative flex flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md"
-          >
-            <Link
-              className="relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl"
-              to={`/products/${product._id}`}
+    <div className="bg-white">
+      <div>
+        {/* Mobile filter dialog */}
+        <Dialog
+          open={mobileFiltersOpen}
+          onClose={setMobileFiltersOpen}
+          className="relative z-40 lg:hidden"
+        >
+          <DialogBackdrop
+            transition
+            className="fixed inset-0 bg-black/25 transition-opacity duration-300 ease-linear data-closed:opacity-0"
+          />
+
+          <div className="fixed inset-0 z-40 flex">
+            <DialogPanel
+              transition
+              className="relative ml-auto flex size-full max-w-xs transform flex-col overflow-y-auto bg-white pt-4 pb-6 shadow-xl transition duration-300 ease-in-out data-closed:translate-x-full"
             >
-              <img
-                className="object-cover w-full"
-                src={product.images[0]}
-                alt="product image"
-              />
-              <span className="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-sm font-medium text-white">
-                39% OFF
-              </span>
-            </Link>
-
-            <div className="mt-4 px-5 pb-5 flex flex-col flex-grow">
-              <a href="#">
-                <h5 className="text-xl tracking-tight text-slate-900">
-                  {product.productName}
-                </h5>
-              </a>
-
-              <div className="mt-2 mb-5 flex items-center justify-between">
-                <p>
-                  <span className="text-3xl font-bold text-slate-900">
-                    ${product.price}
-                  </span>
-                  <span className="ml-2 text-sm text-slate-900 line-through">
-                    ${product.price - 100}
-                  </span>
-                </p>
-
-                <div className="flex items-center">
-                  {[...Array(5)].map((_, i) => (
-                    <svg
-                      key={i}
-                      aria-hidden="true"
-                      className="h-5 w-5 text-yellow-300"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                  <span className="ml-3 rounded bg-yellow-200 px-2.5 py-0.5 text-xs font-semibold">
-                    5.0
-                  </span>
-                </div>
+              <div className="flex items-center justify-between px-4">
+                <h2 className="text-lg font-medium text-gray-900">Filters</h2>
+                <button
+                  type="button"
+                  onClick={() => setMobileFiltersOpen(false)}
+                  className="relative -mr-2 flex size-10 items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                >
+                  <span className="absolute -inset-0.5" />
+                  <span className="sr-only">Close menu</span>
+                  <XMarkIcon aria-hidden="true" className="size-6" />
+                </button>
               </div>
 
-              <a
-                href="#"
-                className="mt-auto flex items-center justify-center rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="mr-2 h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2"
+              {/* Filters */}
+              <form className="mt-4 border-t border-gray-200">
+                <h3 className="sr-only">Categories</h3>
+                <ul role="list" className="px-2 py-3 font-medium text-gray-900">
+                  {subCategories.map((category) => (
+                    <li key={category.name}>
+                      <a href={category.href} className="block px-2 py-3">
+                        {category.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+
+                {filters.map((section) => (
+                  <Disclosure
+                    key={section.id}
+                    as="div"
+                    className="border-t border-gray-200 px-4 py-6"
+                  >
+                    <h3 className="-mx-2 -my-3 flow-root">
+                      <DisclosureButton className="group flex w-full items-center justify-between bg-white px-2 py-3 text-gray-400 hover:text-gray-500">
+                        <span className="font-medium text-gray-900">
+                          {section.name}
+                        </span>
+                        <span className="ml-6 flex items-center">
+                          <PlusIcon
+                            aria-hidden="true"
+                            className="size-5 group-data-open:hidden"
+                          />
+                          <MinusIcon
+                            aria-hidden="true"
+                            className="size-5 group-not-data-open:hidden"
+                          />
+                        </span>
+                      </DisclosureButton>
+                    </h3>
+                    <DisclosurePanel className="pt-6">
+                      <div className="space-y-6">
+                        {section.options.map((option, optionIdx) => (
+                          <div key={option.value} className="flex gap-3">
+                            <div className="flex h-5 shrink-0 items-center">
+                              <div className="group grid size-4 grid-cols-1">
+                                <input
+                                  defaultValue={option.value}
+                                  id={`filter-mobile-${section.id}-${optionIdx}`}
+                                  name={`${section.id}[]`}
+                                  type="checkbox"
+                                  className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
+                                />
+                                <svg
+                                  fill="none"
+                                  viewBox="0 0 14 14"
+                                  className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
+                                >
+                                  <path
+                                    d="M3 8L6 11L11 3.5"
+                                    strokeWidth={2}
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="opacity-0 group-has-checked:opacity-100"
+                                  />
+                                  <path
+                                    d="M3 7H11"
+                                    strokeWidth={2}
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="opacity-0 group-has-indeterminate:opacity-100"
+                                  />
+                                </svg>
+                              </div>
+                            </div>
+                            <label
+                              htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
+                              className="min-w-0 flex-1 text-gray-500"
+                            >
+                              {option.label}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    </DisclosurePanel>
+                  </Disclosure>
+                ))}
+              </form>
+            </DialogPanel>
+          </div>
+        </Dialog>
+
+        <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-baseline justify-between border-b border-gray-200 pt-24 pb-6">
+            <h1 className="text-4xl font-bold tracking-tight text-gray-900">
+              New Arrivals
+            </h1>
+
+            <div className="flex items-center">
+              <Menu as="div" className="relative inline-block text-left">
+                <div>
+                  <MenuButton className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
+                    Sort
+                    <ChevronDownIcon
+                      aria-hidden="true"
+                      className="-mr-1 ml-1 size-5 shrink-0 text-gray-400 group-hover:text-gray-500"
+                    />
+                  </MenuButton>
+                </div>
+
+                <MenuItems
+                  transition
+                  className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                  />
-                </svg>
-                Add to cart
-              </a>
+                  <div className="py-1">
+                    {sortOptions.map((option) => (
+                      <MenuItem key={option.name}>
+                        <a
+                          href={option.href}
+                          className={classNames(
+                            option.current
+                              ? "font-medium text-gray-900"
+                              : "text-gray-500",
+                            "block px-4 py-2 text-sm data-focus:bg-gray-100 data-focus:outline-hidden"
+                          )}
+                        >
+                          {option.name}
+                        </a>
+                      </MenuItem>
+                    ))}
+                  </div>
+                </MenuItems>
+              </Menu>
+
+              <button
+                type="button"
+                className="-m-2 ml-5 p-2 text-gray-400 hover:text-gray-500 sm:ml-7"
+              >
+                <span className="sr-only">View grid</span>
+                <Squares2X2Icon aria-hidden="true" className="size-5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setMobileFiltersOpen(true)}
+                className="-m-2 ml-4 p-2 text-gray-400 hover:text-gray-500 sm:ml-6 lg:hidden"
+              >
+                <span className="sr-only">Filters</span>
+                <FunnelIcon aria-hidden="true" className="size-5" />
+              </button>
             </div>
           </div>
-        ))}
+
+          <section aria-labelledby="products-heading" className="pt-6 pb-24">
+            <h2 id="products-heading" className="sr-only">
+              Products
+            </h2>
+
+            <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
+              {/* Filters */}
+              <form className="hidden lg:block">
+                <h3 className="sr-only">Categories</h3>
+                <ul
+                  role="list"
+                  className="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900"
+                >
+                  {subCategories.map((category) => (
+                    <li key={category.name}>
+                      <a href={category.href}>{category.name}</a>
+                    </li>
+                  ))}
+                </ul>
+
+                {filters.map((section) => (
+                  <Disclosure
+                    key={section.id}
+                    as="div"
+                    className="border-b border-gray-200 py-6"
+                  >
+                    <h3 className="-my-3 flow-root">
+                      <DisclosureButton className="group flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
+                        <span className="font-medium text-gray-900">
+                          {section.name}
+                        </span>
+                        <span className="ml-6 flex items-center">
+                          <PlusIcon
+                            aria-hidden="true"
+                            className="size-5 group-data-open:hidden"
+                          />
+                          <MinusIcon
+                            aria-hidden="true"
+                            className="size-5 group-not-data-open:hidden"
+                          />
+                        </span>
+                      </DisclosureButton>
+                    </h3>
+                    <DisclosurePanel className="pt-6">
+                      <div className="space-y-4">
+                        {section.options.map((option, optionIdx) => (
+                          <div key={option.value} className="flex gap-3">
+                            <div className="flex h-5 shrink-0 items-center">
+                              <div className="group grid size-4 grid-cols-1">
+                                <input
+                                  defaultValue={option.value}
+                                  defaultChecked={option.checked}
+                                  id={`filter-${section.id}-${optionIdx}`}
+                                  name={`${section.id}[]`}
+                                  type="checkbox"
+                                  className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
+                                />
+                                <svg
+                                  fill="none"
+                                  viewBox="0 0 14 14"
+                                  className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
+                                >
+                                  <path
+                                    d="M3 8L6 11L11 3.5"
+                                    strokeWidth={2}
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="opacity-0 group-has-checked:opacity-100"
+                                  />
+                                  <path
+                                    d="M3 7H11"
+                                    strokeWidth={2}
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="opacity-0 group-has-indeterminate:opacity-100"
+                                  />
+                                </svg>
+                              </div>
+                            </div>
+                            <label
+                              htmlFor={`filter-${section.id}-${optionIdx}`}
+                              className="text-sm text-gray-600"
+                            >
+                              {option.label}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    </DisclosurePanel>
+                  </Disclosure>
+                ))}
+              </form>
+
+              {/* Product grid */}
+              <div className="lg:col-span-3">
+                <div className="bg-white">
+                  <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+                    <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+                      Customers also purchased
+                    </h2>
+
+                    <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-7">
+                      {response?.data.products.map((product) => (
+                        <div key={product._id} className="group relative">
+                          <img
+                            alt={product.images[0]}
+                            src={product.images[0]}
+                            className="aspect-square w-full rounded-md bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80"
+                          />
+                          <div className="mt-4 flex justify-between">
+                            <div>
+                              <h3 className="text-sm text-gray-700">
+                                <a href={`/product/${product._id}`}>
+                                  <span
+                                    aria-hidden="true"
+                                    className="absolute inset-0"
+                                  />
+                                  {product.productName}
+                                </a>
+                              </h3>
+                            </div>
+                            <p className="text-sm font-medium text-gray-900">
+                              &#x20B9; {product.price}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
       </div>
     </div>
   );

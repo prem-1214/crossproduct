@@ -7,6 +7,7 @@ import {
 import { useAddProductMutation } from "../../features/products/productApi";
 import Button from "../UI/Button";
 import { InputField } from "../UI/InputField";
+import { useNavigate } from "react-router-dom";
 
 function ProductForm() {
   const {
@@ -16,7 +17,8 @@ function ProductForm() {
     reset,
   } = useForm<ProductFormFields>({ resolver: zodResolver(productFormSchema) });
 
-  const [createProduct] = useAddProductMutation();
+  const [createProduct, { isLoading }] = useAddProductMutation();
+  const navigate = useNavigate();
 
   const onSubmit = async (data: ProductFormFields) => {
     console.log("clicked", data);
@@ -40,7 +42,7 @@ function ProductForm() {
 
     try {
       await createProduct(formData).unwrap();
-      alert("Product created successfully");
+      navigate("/seller/my-products");
       reset();
     } catch (error) {
       console.error("Product creation failed:", error);
@@ -96,7 +98,7 @@ function ProductForm() {
 
       <Button
         type="submit"
-        label="Create Product"
+        label={isLoading ? "Uploading" : "Upload"}
         className="bg-blue-500 text-white px-4 py-2 rounded"
       />
     </form>
