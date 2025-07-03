@@ -1,5 +1,5 @@
 import { api } from "../api";
-import type { CheckoutInput } from "./order.types";
+import type { CheckoutInput, Order } from "./order.types";
 
 export const orderApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -10,7 +10,17 @@ export const orderApi = api.injectEndpoints({
         body: data,
       }),
     }),
+    getOrderById: builder.query<{ data: { order: Order } }, string>({
+      query: (id) => `/order/my-orders/${id}`,
+    }),
+    getMyOrders: builder.query<{ data: { orders: Order[] } }, void>({
+      query: () => "/order/my-orders",
+    }),
   }),
 });
 
-export const { usePlaceOrderMutation } = orderApi;
+export const {
+  usePlaceOrderMutation,
+  useGetOrderByIdQuery,
+  useGetMyOrdersQuery,
+} = orderApi;

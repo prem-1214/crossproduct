@@ -26,22 +26,35 @@ import {
   Truck,
   CreditCard,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function CartPage() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const items = useAppSelector((state) => state.cart.items);
 
   const handleQuantity = (id: string, delta: number) => {
     const item = items.find((item) => item.id === id);
     if (!item) return;
-    const newQuantity = Math.max(
-      1,
-      Math.min(item.stock, item.quantity + delta)
-    );
+    if (delta > 0 && item.quantity >= item.stock) return; // Prevent exceeding stock
     dispatch(updateQuantity({ id, change: delta }));
   };
 
+  // const handleQuantity = (id: string, delta: number) => {
+  //   const item = items.find((item) => item.id === id);
+  //   if (!item) return;
+  //   const newQuantity = Math.max(
+  //     1,
+  //     Math.min(item.stock, item.quantity + delta)
+  //   );
+  //   dispatch(updateQuantity({ id, change: delta }));
+  // };
+
   const handleRemove = (id: string) => dispatch(removeFromCart(id));
+
+  const handleCheckout = () => {
+    navigate("/cart/checkout");
+  };
 
   return (
     <div className="mx-auto w-full max-w-7xl p-6">
@@ -124,14 +137,10 @@ export default function CartPage() {
                 </span>
               </div>
               <Button
-                label={`Proceed to checkout`}
+                label="Proceed to checkout"
                 className="w-full bg-amber-300"
-              >
-                <span>
-                  <CreditCard className="mr-2 w-4 h-4 text-white" />
-                </span>
-                Proceed to Checkout
-              </Button>
+                onClick={handleCheckout}
+              />
             </CardContent>
           </Card>
         </div>

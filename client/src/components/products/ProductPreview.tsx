@@ -22,6 +22,22 @@ export default function ProductPreview() {
   const dispatch = useAppDispatch();
   const [qty, setqty] = useState(1);
 
+  const handleBuyNow = () => {
+    if (!product) return;
+
+    dispatch(
+      addToCart({
+        id: product._id,
+        productName: product.productName,
+        price: product.price,
+        quantity: qty,
+        image: product.images?.[0] || "",
+        stock: product.stock,
+      })
+    );
+    navigate("/cart/checkout");
+  };
+
   const handleAddToCart = () => {
     if (!product) return;
 
@@ -39,6 +55,19 @@ export default function ProductPreview() {
     navigate("/cart");
   };
 
+  // Update QtyField usage to include stock check
+  const handleQtyChange = (e) => {
+    const newQty = Number(e.target.value);
+    if (newQty > product.stock) {
+      alert(`Only ${product.stock} items available in stock.`);
+      setqty(product.stock);
+    } else if (newQty < 1) {
+      setqty(1);
+    } else {
+      setqty(newQty);
+    }
+  };
+
   if (isLoading) return <div>Loading...</div>;
   if (isError || !product) return <div>Product not found.</div>;
 
@@ -48,11 +77,11 @@ export default function ProductPreview() {
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="w-full lg:w-1/2">
             <div className="bg-gray-100 dark:bg-slate-100 rounded-xl p-4 sm:p-6 lg:p-12 lg:mr-6">
-              <div className="text-center mb-4 md:p-6">
+              <div className="flex justify-center mb-4 md:p-6">
                 <img
                   src={product.images?.[index]}
                   alt=""
-                  className="max-w-full h-auto"
+                  className="max-w-full h-72 "
                 />
               </div>
               <ul className="flex gap-3">
@@ -66,7 +95,11 @@ export default function ProductPreview() {
                     key={i}
                     onClick={() => setIndex(i)}
                   >
-                    <img src={imgUrl} alt="" className="max-w-full h-auto" />
+                    <img
+                      src={imgUrl}
+                      alt=""
+                      className="max-w-full h-full w-full"
+                    />
                   </li>
                 ))}
               </ul>
@@ -104,13 +137,17 @@ export default function ProductPreview() {
               <QtyField
                 name="qty"
                 value={qty}
-                onChange={(e) => setqty(Number(e.target.value))}
+                onChange={handleQtyChange}
               />
             </div>
 
             <div className="flex flex-col gap-3 w-full my-7">
               <div className="flex items-center gap-4 w-full max-w-lg">
-                <button className="bg-blue-600 border border-blue-600 text-white text-sm rounded uppercase hover:bg-opacity-90 px-10 py-2.5 h-10 md:px-12 w-1/2">
+                <button
+                  type="button"
+                  onClick={handleBuyNow}
+                  className="bg-blue-600 border border-blue-600 text-white text-sm rounded uppercase hover:bg-opacity-90 px-10 py-2.5 h-10 md:px-12 w-1/2"
+                >
                   Buy Now
                 </button>
                 <button
@@ -137,15 +174,17 @@ export default function ProductPreview() {
   );
 }
 
+// Update QtyField to not allow + button to exceed stock
 const QtyField = ({ name, value, onChange }) => {
-  const qtyControl = (qty) =>
+  const qtyControl = (qty) => {
     onChange({
       target: {
         name,
         type: "radio",
-        value: qty < 1 ? 1 : qty,
+        value: qty,
       },
     });
+  };
 
   return (
     <div className="flex h-11 w-24 mb-4">
@@ -154,6 +193,7 @@ const QtyField = ({ name, value, onChange }) => {
         type="number"
         placeholder=""
         value={value}
+        min={1}
         onChange={(e) => qtyControl(Number(e.target.value))}
       />
       <div className="w-1/3 rounded-lg overflow-hidden flex flex-col border-1 border-black bg-transparent p-0">
@@ -161,6 +201,7 @@ const QtyField = ({ name, value, onChange }) => {
           className="text-blue-600 hover:bg-blue-600 hover:text-white h-1/2 font-bold leading-none text-lg border-b"
           type="button"
           onClick={() => qtyControl(Number(value) - 1)}
+          disabled={value <= 1}
         >
           -
         </button>
@@ -168,6 +209,7 @@ const QtyField = ({ name, value, onChange }) => {
           className="text-blue-600 hover:bg-blue-600 hover:text-white h-1/2 font-bold leading-none text-lg"
           type="button"
           onClick={() => qtyControl(Number(value) + 1)}
+          disabled={value >= (typeof window !== "undefined" && window.productStock ? window.productStock : Infinity)}
         >
           +
         </button>

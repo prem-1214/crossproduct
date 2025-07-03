@@ -21,3 +21,25 @@ export const placeOrder = asyncHandler(async (req: Request, res: Response) => {
 
   return sendSuccess(res, 201, "Order placed successfully", newOrder);
 });
+
+export const getMyOrders = asyncHandler(async (req: Request, res: Response) => {
+  const myOrders = await Order.find({ user: req.user?._id })
+    .populate("products.product", "productName  price images")
+    .sort({ createdAt: -1 });
+
+  return sendSuccess(res, 200, "Fetched user orders.", { orders: myOrders });
+});
+
+export const getOrderById = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    const order = await Order.findById(id)
+      .populate("products.product", "productName price images")
+      .populate("user", "email");
+
+    if (!order) throw new AppError("Order not found", 404);
+
+    return sendSuccess(res, 200, "Order fetched successfully", { order });
+  }
+);

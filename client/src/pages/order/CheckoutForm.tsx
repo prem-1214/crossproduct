@@ -2,7 +2,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { checkoutSchema } from "@/features/order/checkoutSchema";
 import { usePlaceOrderMutation } from "@/features/order/orderApi";
-import { useAppSelector } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { useNavigate } from "react-router-dom";
+import type { CheckoutInput } from "@/features/order/order.types";
+import { clearCart } from "@/features/cart/cartSlice";
 
 export default function CheckoutForm() {
   const cartItems = useAppSelector((state) => state.cart.items);
@@ -13,6 +16,9 @@ export default function CheckoutForm() {
 
   const [placeOrder] = usePlaceOrderMutation();
 
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
   const {
     register,
     handleSubmit,
@@ -21,9 +27,9 @@ export default function CheckoutForm() {
     resolver: zodResolver(checkoutSchema),
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: CheckoutInput) => {
     try {
-      await placeOrder({
+      const response = await placeOrder({
         ...data,
         products: cartItems.map((i) => ({
           product: i.id,
@@ -31,7 +37,11 @@ export default function CheckoutForm() {
         })),
         totalPrice,
       }).unwrap();
-      alert("Order placed");
+
+      dispatch(clearCart());
+
+      const orderId = response?.data?._id;
+      navigate(`/order/my-orders/${orderId}`);
     } catch (err) {
       console.log("Order failed", err);
       alert("Order failed, please try again.");

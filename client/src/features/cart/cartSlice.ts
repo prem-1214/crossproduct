@@ -79,9 +79,3 @@ export const { addToCart, removeFromCart, updateQuantity, clearCart } =
 
 export default cartSlice.reducer;
 
-const handleQuantity = (id: string, delta: number) => {
-  const item = items.find((item) => item.id === id);
-  if (!item) return;
-  if (delta > 0 && item.quantity >= item.stock) return; // Prevent exceeding stock
-  dispatch(updateQuantity({ id, change: delta }));
-};

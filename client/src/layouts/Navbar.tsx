@@ -4,12 +4,16 @@ import Button from "../components/UI/CustomButton";
 import { useLogoutMutation } from "../features/auth/authApi";
 import { logout } from "../features/auth/authSlice";
 import type { FC } from "react";
+import { ShoppingCart } from "lucide-react";
 
 const Navbar: FC = () => {
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+  const cartItems = useAppSelector((state) => state.cart.items);
   const [logoutApi] = useLogoutMutation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleLogout = async (): Promise<void> => {
     try {
@@ -47,14 +51,18 @@ const Navbar: FC = () => {
           user?.role === "user" &&
           !user?.isVarifiedSeller && (
             <>
-              <NavLink to="/user/products" className={navLinkClass}>
-                Products
-              </NavLink>
-              <NavLink to="/my-orders" className={navLinkClass}>
+              <NavLink to="/order/my-orders" className={navLinkClass}>
                 Orders
               </NavLink>
               <NavLink to="/cart" className={navLinkClass}>
-                Cart
+                <div className="relative">
+                  <ShoppingCart className="h-6 w-6 text-gray-600" />
+                  {totalItems > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                      {totalItems}
+                    </span>
+                  )}
+                </div>
               </NavLink>
               <NavLink to="/profile" className={navLinkClass}>
                 Profile

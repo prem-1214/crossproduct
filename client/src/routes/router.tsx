@@ -20,6 +20,8 @@ import ProductPreview from "../components/products/ProductPreview";
 import Product from "../pages/user/Product";
 import Cart from "@/components/products/Cart";
 import CheckoutForm from "@/pages/order/CheckoutForm";
+import MyOrdersPage from "@/pages/order/MyOrdersPage";
+import OrderSummary from "@/pages/order/OrderSummaryPage";
 
 const router = createBrowserRouter(
   createRoutesFromChildren(
@@ -36,9 +38,10 @@ const router = createBrowserRouter(
           <Route element={<RoleGuard allowedRoles={["user"]} />}>
             {/* <Route path="/user/profile" /> */}
             <Route path="/user/products" element={<Product />} />
-            <Route path="/my-orders" />
             <Route path="/cart" element={<Cart />} />
-            <Route path="/user/order" element={<CheckoutForm />} />
+            <Route path="/cart/checkout" element={<CheckoutForm />} />
+            <Route path="/order/my-orders" element={<MyOrdersPage />} />
+            <Route path="/order/my-orders/:id" element={<OrderSummary />} />
           </Route>
           <Route element={<RoleGuard allowedRoles={["seller"]} />}>
             {/* <Route path="/seller/profile" /> */}

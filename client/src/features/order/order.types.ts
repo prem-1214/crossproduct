@@ -10,3 +10,25 @@ export interface CheckoutInput {
   products: { product: string; quantity: number }[];
   totalPrice: number;
 }
+
+export interface ProductInOrder {
+  _id: string;
+  name: string;
+  price: number;
+  images: string[];
+}
+
+export interface OrderItem {
+  product: ProductInOrder;
+  quantity: number;
+}
+
+export interface Order {
+  _id: string;
+  user: string;
+  products: OrderItem[];
+  status: "Pending" | "Shipped" | "Delivered";
+  total: number;
+  createdAt: string;
+  updatedAt: string;
+}
