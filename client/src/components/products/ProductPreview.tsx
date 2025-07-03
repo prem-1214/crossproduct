@@ -1,8 +1,10 @@
 import React, { Fragment, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faShareAlt, faStar } from "@fortawesome/free-solid-svg-icons";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useGetProductByIdQuery } from "../../features/products/productApi";
+import { useAppDispatch } from "@/store/hooks";
+import { addToCart } from "@/features/cart/cartSlice";
 
 export default function ProductPreview() {
   const [index, setIndex] = useState(0);
@@ -14,8 +16,28 @@ export default function ProductPreview() {
     isError,
     error,
   } = useGetProductByIdQuery(id ?? "");
+  const navigate = useNavigate();
 
   const product = response?.data;
+  const dispatch = useAppDispatch();
+  const [qty, setqty] = useState(1);
+
+  const handleAddToCart = () => {
+    if (!product) return;
+
+    console.log(product);
+    dispatch(
+      addToCart({
+        id: product._id,
+        productName: product.productName,
+        price: product.price,
+        quantity: qty,
+        image: product.images?.[0] || "",
+        stock: product.stock,
+      })
+    );
+    navigate("/cart");
+  };
 
   if (isLoading) return <div>Loading...</div>;
   if (isError || !product) return <div>Product not found.</div>;
@@ -69,119 +91,51 @@ export default function ProductPreview() {
               <p className="opacity-70 lg:mr-56 xl:mr-80 my-4">
                 {product.description}
               </p>
+              <p className="opacity-70 lg:mr-56 xl:mr-80 my-4">
+                Items available - {product.stock}
+              </p>
               <h3 className="text-2xl text-blue-600 font-medium">
                 Rs. {product.price}
               </h3>
             </div>
 
-            <form action="#!">
-              {/* Pass product as prop if you have colorVariants/sizeVariants */}
-              <ColorVariant product={product} />
-              <SizeVariant product={product} />
-              <div className="mb-6">
-                <h5 className="font-medium mb-2">QTY</h5>
-                <QtyField name="qty" value={1} onChange={() => {}} />
-              </div>
+            <div className="mb-6">
+              <h5 className="font-medium mb-2">QTY</h5>
+              <QtyField
+                name="qty"
+                value={qty}
+                onChange={(e) => setqty(Number(e.target.value))}
+              />
+            </div>
 
-              <div className="flex flex-col gap-3 w-full my-7">
-                <div className="flex items-center gap-4 w-full max-w-lg">
-                  <button className="bg-blue-600 border border-blue-600 text-white text-sm rounded uppercase hover:bg-opacity-90 px-10 py-2.5 h-10 md:px-12 w-1/2">
-                    Buy Now
-                  </button>
-                  <button className="border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white text-sm rounded uppercase px-6 py-2.5 h-10 md:px-12 w-1/2">
-                    Add To Cart
-                  </button>
-                </div>
-                <div className="flex items-center gap-4 w-full">
-                  <button className="hover:border-1 rounded hover:bg-opacity-10 text-blue-600 px-3 py-2">
-                    <FontAwesomeIcon icon={faHeart} /> Add to wishlist
-                  </button>
-                  <button className="hover:border-1 rounded hover:bg-opacity-10 text-blue-600 px-3 py-2">
-                    <FontAwesomeIcon icon={faShareAlt} className="mr-1" /> share
-                  </button>
-                </div>
+            <div className="flex flex-col gap-3 w-full my-7">
+              <div className="flex items-center gap-4 w-full max-w-lg">
+                <button className="bg-blue-600 border border-blue-600 text-white text-sm rounded uppercase hover:bg-opacity-90 px-10 py-2.5 h-10 md:px-12 w-1/2">
+                  Buy Now
+                </button>
+                <button
+                  type="button"
+                  onClick={handleAddToCart}
+                  className="border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white text-sm rounded uppercase px-6 py-2.5 h-10 md:px-12 w-1/2"
+                >
+                  Add To Cart
+                </button>
               </div>
-            </form>
+              <div className="flex items-center gap-4 w-full">
+                <button className="hover:border-1 rounded hover:bg-opacity-10 text-blue-600 px-3 py-2">
+                  <FontAwesomeIcon icon={faHeart} /> Add to wishlist
+                </button>
+                <button className="hover:border-1 rounded hover:bg-opacity-10 text-blue-600 px-3 py-2">
+                  <FontAwesomeIcon icon={faShareAlt} className="mr-1" /> share
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
   );
 }
-
-// ColorVariant and SizeVariant now accept product as a prop
-const ColorVariant = ({ product }) => {
-  const [selectedColor, setSelectedColor] = useState(
-    product?.colorVariants?.[0]?.value || ""
-  );
-  if (!product?.colorVariants) return null;
-
-  return (
-    <div className="mb-6">
-      <h5 className="font-medium mb-2">Color: </h5>
-      <div className="flex flex-wrap gap-2 mb-2">
-        {product.colorVariants.map((item, i) => (
-          <Fragment key={i}>
-            <input
-              type="radio"
-              className="absolute hidden"
-              autoComplete="off"
-              checked={selectedColor === item.value}
-              onChange={() => setSelectedColor(item.value)}
-            />
-            <label
-              className={`w-8 h-8 rounded-full ${item.bgcolor} border-2 border-white dark:border-[#0b1727] cursor-pointer mt-1`}
-              onClick={() => setSelectedColor(item.value)}
-            ></label>
-          </Fragment>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-const SizeVariant = ({ product }) => {
-  const [selectedSize, setSelectedSize] = useState(
-    product?.sizeVariants?.[0]?.value || ""
-  );
-  if (!product?.sizeVariants) return null;
-
-  return (
-    <div className="mb-6">
-      <h5 className="text-sm font-medium mb-2">
-        Size:{" "}
-        <span className="opacity-50">
-          {selectedSize &&
-            product.sizeVariants.find((size) => size.value === selectedSize)
-              ?.label}
-        </span>
-      </h5>
-      <div className="flex gap-2 mb-2">
-        {product.sizeVariants.map((size) => (
-          <React.Fragment key={size.label}>
-            <input
-              type="radio"
-              className="sr-only"
-              autoComplete="off"
-              checked={selectedSize === size.value}
-              onChange={() => setSelectedSize(size.value)}
-            />
-            <label
-              className={`bg-gray-100 dark:bg-slate-800 cursor-pointer rounded-md flex flex-col overflow-hidden text-start border-2 border-white dark:border-[#0b1727]  ${
-                selectedSize === size.value &&
-                "outline outline-1 outline-blue-600 dark:outline-blue-600"
-              } hover:outline-blue-600 px-6 py-4`}
-              onClick={() => setSelectedSize(size.value)}
-            >
-              <b className="mb-2">{size.label}</b>
-              <span className="opacity-75 mb-2">{size.content}</span>
-            </label>
-          </React.Fragment>
-        ))}
-      </div>
-    </div>
-  );
-};
 
 const QtyField = ({ name, value, onChange }) => {
   const qtyControl = (qty) =>

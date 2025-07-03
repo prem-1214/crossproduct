@@ -5,7 +5,7 @@ import {
   type ProductFormFields,
 } from "../../features/products/productSchema";
 import { useAddProductMutation } from "../../features/products/productApi";
-import Button from "../UI/Button";
+import Button from "../UI/CustomButton";
 import { InputField } from "../UI/InputField";
 import { useNavigate } from "react-router-dom";
 

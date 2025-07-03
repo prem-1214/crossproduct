@@ -119,9 +119,9 @@ function LandingPage() {
                 <ul role="list" className="px-2 py-3 font-medium text-gray-900">
                   {subCategories.map((category) => (
                     <li key={category.name}>
-                      <a href={category.href} className="block px-2 py-3">
+                      <Link to={category.href} className="block px-2 py-3">
                         {category.name}
-                      </a>
+                      </Link>
                     </li>
                   ))}
                 </ul>
@@ -365,21 +365,23 @@ function LandingPage() {
                     <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-7">
                       {response?.data.products.map((product) => (
                         <div key={product._id} className="group relative">
-                          <img
-                            alt={product.images[0]}
-                            src={product.images[0]}
-                            className="aspect-square w-full rounded-md bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80"
-                          />
+                          <Link to={product.images[0]}>
+                            <img
+                              alt={product.images[0]}
+                              src={product.images[0]}
+                              className="aspect-square w-full rounded-md bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80"
+                            />
+                          </Link>
                           <div className="mt-4 flex justify-between">
                             <div>
                               <h3 className="text-sm text-gray-700">
-                                <a href={`/product/${product._id}`}>
+                                <Link to={`/product/${product._id}`}>
                                   <span
                                     aria-hidden="true"
                                     className="absolute inset-0"
                                   />
                                   {product.productName}
-                                </a>
+                                </Link>
                               </h3>
                             </div>
                             <p className="text-sm font-medium text-gray-900">

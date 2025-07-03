@@ -1,7 +1,7 @@
 import { useState, type JSX } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { InputField } from "../../components/UI/InputField";
-import Button from "../../components/UI/Button";
+import Button from "../../components/UI/CustomButton";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginInput } from "../../features/auth/authSchema";
 import { useLoginMutation } from "../../features/auth/authApi";

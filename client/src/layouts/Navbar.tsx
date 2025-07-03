@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import Button from "../components/UI/Button";
+import Button from "../components/UI/CustomButton";
 import { useLogoutMutation } from "../features/auth/authApi";
 import { logout } from "../features/auth/authSlice";
 import type { FC } from "react";
