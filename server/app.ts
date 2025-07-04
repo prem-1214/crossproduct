@@ -1,16 +1,16 @@
-/// <reference path="./types/express/index.d.ts" />
+/// <reference path="./src/types/express/index.d.ts" />
 import express from "express";
 import cors from "cors";
-import { errorHandler } from "./middlewares/errorHandler.middleware";
+import { errorHandler } from "./src//middlewares/errorHandler.middleware";
 import cookieParser from "cookie-parser";
-import { config } from "./config/config";
-import apiRouter from "./api/index";
+import { config } from "./src/config/config";
+import apiRouter from "./src/api/index";
 
 const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: config.FRONTEND_URI,
     credentials: true,
     exposedHeaders: ["Authorization"],
   })
