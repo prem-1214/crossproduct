@@ -4,9 +4,9 @@ import {
 } from "@/features/order/orderApi";
 import Button from "@/components/UI/CustomButton";
 import Pagination from "@/components/UI/Pagination";
-import React, { useState } from "react";
+import { useState } from "react";
 
-export default function AdminOrdersPage() {
+export default function ManageOrders() {
   const [page, setPage] = useState(1);
   const limit = 10;
 

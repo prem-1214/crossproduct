@@ -1,31 +1,9 @@
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { updateQuantity, removeFromCart } from "@/features/cart/cartSlice";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card";
+
 import Button from "@/components/UI/CustomButton";
-import {
-  Trash2,
-  Plus,
-  Minus,
-  Package,
-  Shield,
-  Truck,
-  CreditCard,
-} from "lucide-react";
+import { Trash2, Plus, Minus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function CartPage() {
@@ -39,16 +17,6 @@ export default function CartPage() {
     if (delta > 0 && item.quantity >= item.stock) return; // Prevent exceeding stock
     dispatch(updateQuantity({ id, change: delta }));
   };
-
-  // const handleQuantity = (id: string, delta: number) => {
-  //   const item = items.find((item) => item.id === id);
-  //   if (!item) return;
-  //   const newQuantity = Math.max(
-  //     1,
-  //     Math.min(item.stock, item.quantity + delta)
-  //   );
-  //   dispatch(updateQuantity({ id, change: delta }));
-  // };
 
   const handleRemove = (id: string) => dispatch(removeFromCart(id));
 
@@ -82,8 +50,7 @@ export default function CartPage() {
                         <h3 className="font-medium">{item.productName}</h3>
                       </div>
                       <Button
-                        variant="ghost"
-                        size="icon"
+                        label="delete"
                         onClick={() => handleRemove(item.id)}
                       >
                         <Trash2 className="w-4 h-4" />
@@ -130,10 +97,14 @@ export default function CartPage() {
               <div className="flex justify-between font-semibold text-lg">
                 <span>Total</span>
                 <span>
-                  &#8377;
-                  {items
-                    .reduce((acc, item) => acc + item.price * item.quantity, 0)
-                    .toFixed(2)}
+                  ₹
+                  {" " +
+                    items
+                      .reduce(
+                        (acc, item) => acc + item.price * item.quantity,
+                        0
+                      )
+                      .toFixed(2)}
                 </span>
               </div>
               <Button

@@ -7,19 +7,20 @@ interface props {
 }
 
 function ImageUploadGrid({ register }: props) {
+  const imageFields = ["image1", "image2", "image3", "image4"] as const;
+
   return (
     <div>
-      {[0, 1, 2, 3].map((i) => (
-        <div key={i}>
+      {imageFields.map((field, i) => (
+        <div key={field}>
           <InputField
             label={`Image ${i + 1}`}
             type="file"
-            {...register(`images.${i}`)}
+            {...register(field)}
           />
         </div>
       ))}
     </div>
   );
 }
-
 export default ImageUploadGrid;

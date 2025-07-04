@@ -13,7 +13,7 @@ export interface CheckoutInput {
 
 export interface ProductInOrder {
   _id: string;
-  name: string;
+  productName: string;
   price: number;
   images: string[];
 }

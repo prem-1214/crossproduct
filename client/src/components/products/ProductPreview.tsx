@@ -1,7 +1,7 @@
-import React, { Fragment, useState } from "react";
+import { useState, type ChangeEvent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faShareAlt, faStar } from "@fortawesome/free-solid-svg-icons";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGetProductByIdQuery } from "../../features/products/productApi";
 import { useAppDispatch } from "@/store/hooks";
 import { addToCart } from "@/features/cart/cartSlice";
@@ -14,7 +14,6 @@ export default function ProductPreview() {
     data: response,
     isLoading,
     isError,
-    error,
   } = useGetProductByIdQuery(id ?? "");
   const navigate = useNavigate();
 
@@ -56,7 +55,8 @@ export default function ProductPreview() {
   };
 
   // Update QtyField usage to include stock check
-  const handleQtyChange = (e) => {
+  const handleQtyChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!product) return;
     const newQty = Number(e.target.value);
     if (newQty > product.stock) {
       alert(`Only ${product.stock} items available in stock.`);
@@ -128,7 +128,7 @@ export default function ProductPreview() {
                 Items available - {product.stock}
               </p>
               <h3 className="text-2xl text-blue-600 font-medium">
-                Rs. {product.price}
+                ₹ {product.price}
               </h3>
             </div>
 
@@ -138,6 +138,7 @@ export default function ProductPreview() {
                 name="qty"
                 value={qty}
                 onChange={handleQtyChange}
+                stock={product.stock}
               />
             </div>
 
@@ -174,16 +175,24 @@ export default function ProductPreview() {
   );
 }
 
+interface QtyFieldProps {
+  name: string;
+  value: number;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  stock: number;
+}
 // Update QtyField to not allow + button to exceed stock
-const QtyField = ({ name, value, onChange }) => {
-  const qtyControl = (qty) => {
+const QtyField = ({ name, value, onChange, stock }: QtyFieldProps) => {
+  const qtyControl = (qty: number) => {
+    if (qty > stock) qty = stock;
+    else if (qty < 1) qty = 1;
     onChange({
       target: {
         name,
         type: "radio",
-        value: qty,
+        value: qty.toString(),
       },
-    });
+    } as unknown as ChangeEvent<HTMLInputElement>);
   };
 
   return (
@@ -209,7 +218,7 @@ const QtyField = ({ name, value, onChange }) => {
           className="text-blue-600 hover:bg-blue-600 hover:text-white h-1/2 font-bold leading-none text-lg"
           type="button"
           onClick={() => qtyControl(Number(value) + 1)}
-          disabled={value >= (typeof window !== "undefined" && window.productStock ? window.productStock : Infinity)}
+          disabled={value >= stock}
         >
           +
         </button>

@@ -15,13 +15,14 @@ import AdminUsersPage from "../pages/admin/AdminUsersPage";
 
 import ProductForm from "../components/products/ProductForm";
 import MyProducts from "../pages/seller/MyProducts";
-import SellerDashboard from "../pages/seller/SellerDashboard";
+
 import ProductPreview from "../components/products/ProductPreview";
 import Product from "../pages/user/Product";
 import Cart from "@/components/products/Cart";
 import CheckoutForm from "@/pages/order/CheckoutForm";
 import MyOrdersPage from "@/pages/order/MyOrdersPage";
 import OrderSummary from "@/pages/order/OrderSummaryPage";
+import ManageOrders from "@/pages/seller/ManageOrders";
 
 const router = createBrowserRouter(
   createRoutesFromChildren(
@@ -45,12 +46,12 @@ const router = createBrowserRouter(
           </Route>
           <Route element={<RoleGuard allowedRoles={["seller"]} />}>
             {/* <Route path="/seller/profile" /> */}
-            <Route path="/seller/dashboard"/>
+            <Route path="/seller/dashboard" />
             <Route path="/seller/my-products" element={<MyProducts />} />
             <Route path="/seller/my-product/:id" element={<ProductPreview />} />
             <Route path="/seller/add-product" element={<ProductForm />} />
-            <Route path="/seller/orders" element={<SellerDashboard />} />
-            <Route path="/seller/orders/:id" element={<SellerDashboard />} />
+            <Route path="/seller/orders" element={<ManageOrders />} />
+            <Route path="/seller/orders/:id" element={<ManageOrders />} />
           </Route>
           <Route element={<RoleGuard allowedRoles={["admin"]} />}>
             {/* <Route path="/admin/profile" /> */}

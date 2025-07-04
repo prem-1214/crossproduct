@@ -78,7 +78,7 @@ function classNames(...classes: (string | undefined | null | false)[]): string {
   return classes.filter(Boolean).join(" ");
 }
 function LandingPage() {
-  const { data: response, isLoading, refetch } = useGetAllProductsQuery();
+  const { data: response } = useGetAllProductsQuery();
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   return (

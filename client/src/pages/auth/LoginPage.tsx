@@ -32,12 +32,28 @@ function LoginPage(): JSX.Element {
       }
       console.log("login Data >>>>", response.data.accessToken);
       dispatch(loginSuccess({ user, accessToken }));
-      // const localuser = localStorage.getItem("user");
-      // console.log("local user : >>> ", localuser);
       navigate("/");
     } catch (error: unknown) {
-      setError(error?.data?.message || "Login failed");
-      console.log("Login failed ", error?.data?.message);
+      if (typeof error === "object" && error !== null) {
+        const maybeError = error as Record<string, unknown>;
+        if (
+          "data" in maybeError &&
+          typeof maybeError.data === "object" &&
+          maybeError.data !== null
+        ) {
+          const data = maybeError.data as Record<string, unknown>;
+          if ("message" in data && typeof data.message === "string") {
+            setError(data.message);
+            return;
+          }
+        }
+      }
+
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("Unknown error occurred");
+      }
     }
   };
 

@@ -20,7 +20,7 @@ function RegisterPage(): JSX.Element {
   } = useForm<RegisterInput>({ resolver: zodResolver(registerSchema) });
 
   const [useregister] = useRegisterMutation();
-  const [error, serError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -33,8 +33,26 @@ function RegisterPage(): JSX.Element {
       dispatch(registerSuccess(response.data));
       navigate("/login");
     } catch (error: unknown) {
-      serError(error?.data?.message || "Registration failed");
-      console.log("Error during registration", error);
+      if (typeof error === "object" && error !== null) {
+        const maybeError = error as Record<string, unknown>;
+        if (
+          "data" in maybeError &&
+          typeof maybeError.data === "object" &&
+          maybeError.data !== null
+        ) {
+          const data = maybeError.data as Record<string, unknown>;
+          if ("message" in data && typeof data.message === "string") {
+            setError(data.message);
+            return;
+          }
+        }
+      }
+
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("Unknown error occurred");
+      }
     }
   };
 

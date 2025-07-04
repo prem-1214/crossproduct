@@ -48,7 +48,7 @@ function OrderSummary() {
               <span className="truncate max-w-xs md:max-w-full">
                 {item.product.productName} × {item.quantity}
               </span>
-              <span>${(item.product.price * item.quantity).toFixed(2)}</span>
+              <span>₹ {(item.product.price * item.quantity).toFixed(2)}</span>
             </li>
           ))}
         </ul>
@@ -66,7 +66,7 @@ function OrderSummary() {
             {order.status}
           </span>
         </p>
-        <p className="text-xl font-bold">${total.toFixed(2)}</p>
+        <p className="text-xl font-bold">₹ {total.toFixed(2)}</p>
       </section>
     </div>
   );
