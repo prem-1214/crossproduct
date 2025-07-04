@@ -45,11 +45,12 @@ const router = createBrowserRouter(
           </Route>
           <Route element={<RoleGuard allowedRoles={["seller"]} />}>
             {/* <Route path="/seller/profile" /> */}
-            <Route path="/seller/dashboard" element={<SellerDashboard />} />
+            <Route path="/seller/dashboard"/>
             <Route path="/seller/my-products" element={<MyProducts />} />
             <Route path="/seller/my-product/:id" element={<ProductPreview />} />
             <Route path="/seller/add-product" element={<ProductForm />} />
-            <Route path="/seller/orders" />
+            <Route path="/seller/orders" element={<SellerDashboard />} />
+            <Route path="/seller/orders/:id" element={<SellerDashboard />} />
           </Route>
           <Route element={<RoleGuard allowedRoles={["admin"]} />}>
             {/* <Route path="/admin/profile" /> */}

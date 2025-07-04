@@ -49,7 +49,11 @@ const orderSchema = new Schema<IOrder>(
     },
     paymentMethod: { type: String, enum: ["COD", "Stripe"], default: "COD" },
     totalPrice: { type: Number },
-    status: { type: String, default: "Pending" },
+    status: {
+      type: String,
+      enum: ["Pending", "Shipped", "Delivered", "Cancelled"],
+      default: "Pending",
+    },
   },
   { timestamps: true }
 );

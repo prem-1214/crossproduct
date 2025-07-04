@@ -18,7 +18,6 @@ const Navbar: FC = () => {
   const handleLogout = async (): Promise<void> => {
     try {
       await logoutApi().unwrap();
-      console.log("log out................");
       dispatch(logout());
       navigate("/login");
     } catch (error) {
@@ -89,7 +88,7 @@ const Navbar: FC = () => {
               <NavLink to="/seller/add-product" className={navLinkClass}>
                 Add Product
               </NavLink>
-              <NavLink to="/orders" className={navLinkClass}>
+              <NavLink to="/seller/orders" className={navLinkClass}>
                 Orders
               </NavLink>
               <NavLink to="/profile" className={navLinkClass}>

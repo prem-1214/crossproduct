@@ -5,6 +5,7 @@ import {
   getAllUserListHandler,
   updateUserHandler,
 } from "./admin.controller";
+import { updateStatus } from "../../orders/order.controller";
 
 const router = Router();
 
@@ -19,5 +20,9 @@ router
 router
   .route("/users/:id")
   .patch(authenticate, checkRole("admin"), updateUserHandler);
+
+router
+  .route("/orders/:id/status")
+  .patch(authenticate, checkRole("seller"), updateStatus);
 
 export default router;
