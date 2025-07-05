@@ -8,5 +8,5 @@ export const checkoutSchema = z.object({
     postalCode: z.string().min(1),
     country: z.string().min(1),
   }),
-  paymentMethod: z.enum(["COD", "Stripe"]),
+  paymentMethod: z.enum(["COD", "UPI"]),
 });

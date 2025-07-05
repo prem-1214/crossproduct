@@ -20,7 +20,7 @@ export interface IOrder extends Document {
   user: Types.ObjectId;
   products: IOrderProduct[];
   shippingAddress?: IShippingAddress;
-  paymentMethod: "COD" | "Stripe";
+  paymentMethod: "COD" | "UPI";
   totalPrice?: number;
   status: string;
   createdAt?: Date;
@@ -47,7 +47,7 @@ const orderSchema = new Schema<IOrder>(
       postalCode: { type: String },
       country: { type: String },
     },
-    paymentMethod: { type: String, enum: ["COD", "Stripe"], default: "COD" },
+    paymentMethod: { type: String, enum: ["COD", "UPI"], default: "COD" },
     totalPrice: { type: Number },
     status: {
       type: String,

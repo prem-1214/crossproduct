@@ -1,16 +1,15 @@
-/// <reference path="./src/types/express/index.d.ts" />
-import express from "express";
+import express, { Application } from "express";
 import cors from "cors";
 import { errorHandler } from "./src//middlewares/errorHandler.middleware";
 import cookieParser from "cookie-parser";
 import { config } from "./src/config/config";
 import apiRouter from "./src/api/index";
 
-const app = express();
+const app: Application = express();
 
 app.use(
   cors({
-    origin: config.FRONTEND_URI,
+    origin: "http://localhost:5173",
     credentials: true,
     exposedHeaders: ["Authorization"],
   })
