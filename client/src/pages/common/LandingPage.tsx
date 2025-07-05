@@ -21,22 +21,44 @@ import {
   PlusIcon,
   Squares2X2Icon,
 } from "@heroicons/react/20/solid";
+import Pagination from "../../components/UI/Pagination";
 
-const sortOptions = [
+// Type definitions
+interface SortOption {
+  name: string;
+  href: string;
+  current: boolean;
+}
+interface SubCategory {
+  name: string;
+  href: string;
+}
+interface FilterOption {
+  value: string;
+  label: string;
+  checked: boolean;
+}
+interface FilterSection {
+  id: string;
+  name: string;
+  options: FilterOption[];
+}
+
+const sortOptions: SortOption[] = [
   { name: "Most Popular", href: "#", current: true },
   { name: "Best Rating", href: "#", current: false },
   { name: "Newest", href: "#", current: false },
   { name: "Price: Low to High", href: "#", current: false },
   { name: "Price: High to Low", href: "#", current: false },
 ];
-const subCategories = [
+const subCategories: SubCategory[] = [
   { name: "Totes", href: "#" },
   { name: "Backpacks", href: "#" },
   { name: "Travel Bags", href: "#" },
   { name: "Hip Bags", href: "#" },
   { name: "Laptop Sleeves", href: "#" },
 ];
-const filters = [
+const filters: FilterSection[] = [
   {
     id: "color",
     name: "Color",
@@ -78,8 +100,14 @@ function classNames(...classes: (string | undefined | null | false)[]): string {
   return classes.filter(Boolean).join(" ");
 }
 function LandingPage() {
-  const { data: response } = useGetAllProductsQuery();
+  const [page, setPage] = useState(1);
+  const limit = 9;
+  const { data: response } = useGetAllProductsQuery({ page, limit });
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const totalPages = Math.ceil((response?.data.total || 0) / limit);
+
+  const handlePrev = () => setPage((p) => Math.max(1, p - 1));
+  const handleNext = () => setPage((p) => Math.min(totalPages, p + 1));
 
   return (
     <div className="bg-white">
@@ -117,7 +145,7 @@ function LandingPage() {
               <form className="mt-4 border-t border-gray-200">
                 <h3 className="sr-only">Categories</h3>
                 <ul role="list" className="px-2 py-3 font-medium text-gray-900">
-                  {subCategories.map((category) => (
+                  {subCategories.map((category: SubCategory) => (
                     <li key={category.name}>
                       <Link to={category.href} className="block px-2 py-3">
                         {category.name}
@@ -126,7 +154,7 @@ function LandingPage() {
                   ))}
                 </ul>
 
-                {filters.map((section) => (
+                {filters.map((section: FilterSection) => (
                   <Disclosure
                     key={section.id}
                     as="div"
@@ -151,47 +179,49 @@ function LandingPage() {
                     </h3>
                     <DisclosurePanel className="pt-6">
                       <div className="space-y-6">
-                        {section.options.map((option, optionIdx) => (
-                          <div key={option.value} className="flex gap-3">
-                            <div className="flex h-5 shrink-0 items-center">
-                              <div className="group grid size-4 grid-cols-1">
-                                <input
-                                  defaultValue={option.value}
-                                  id={`filter-mobile-${section.id}-${optionIdx}`}
-                                  name={`${section.id}[]`}
-                                  type="checkbox"
-                                  className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
-                                />
-                                <svg
-                                  fill="none"
-                                  viewBox="0 0 14 14"
-                                  className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
-                                >
-                                  <path
-                                    d="M3 8L6 11L11 3.5"
-                                    strokeWidth={2}
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    className="opacity-0 group-has-checked:opacity-100"
+                        {section.options.map(
+                          (option: FilterOption, optionIdx: number) => (
+                            <div key={option.value} className="flex gap-3">
+                              <div className="flex h-5 shrink-0 items-center">
+                                <div className="group grid size-4 grid-cols-1">
+                                  <input
+                                    defaultValue={option.value}
+                                    id={`filter-mobile-${section.id}-${optionIdx}`}
+                                    name={`${section.id}[]`}
+                                    type="checkbox"
+                                    className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
                                   />
-                                  <path
-                                    d="M3 7H11"
-                                    strokeWidth={2}
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    className="opacity-0 group-has-indeterminate:opacity-100"
-                                  />
-                                </svg>
+                                  <svg
+                                    fill="none"
+                                    viewBox="0 0 14 14"
+                                    className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
+                                  >
+                                    <path
+                                      d="M3 8L6 11L11 3.5"
+                                      strokeWidth={2}
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      className="opacity-0 group-has-checked:opacity-100"
+                                    />
+                                    <path
+                                      d="M3 7H11"
+                                      strokeWidth={2}
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      className="opacity-0 group-has-indeterminate:opacity-100"
+                                    />
+                                  </svg>
+                                </div>
                               </div>
+                              <label
+                                htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
+                                className="min-w-0 flex-1 text-gray-500"
+                              >
+                                {option.label}
+                              </label>
                             </div>
-                            <label
-                              htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
-                              className="min-w-0 flex-1 text-gray-500"
-                            >
-                              {option.label}
-                            </label>
-                          </div>
-                        ))}
+                          )
+                        )}
                       </div>
                     </DisclosurePanel>
                   </Disclosure>
@@ -224,7 +254,7 @@ function LandingPage() {
                   className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
                 >
                   <div className="py-1">
-                    {sortOptions.map((option) => (
+                    {sortOptions.map((option: SortOption) => (
                       <MenuItem key={option.name}>
                         <a
                           href={option.href}
@@ -274,14 +304,14 @@ function LandingPage() {
                   role="list"
                   className="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900"
                 >
-                  {subCategories.map((category) => (
+                  {subCategories.map((category: SubCategory) => (
                     <li key={category.name}>
                       <a href={category.href}>{category.name}</a>
                     </li>
                   ))}
                 </ul>
 
-                {filters.map((section) => (
+                {filters.map((section: FilterSection) => (
                   <Disclosure
                     key={section.id}
                     as="div"
@@ -306,48 +336,50 @@ function LandingPage() {
                     </h3>
                     <DisclosurePanel className="pt-6">
                       <div className="space-y-4">
-                        {section.options.map((option, optionIdx) => (
-                          <div key={option.value} className="flex gap-3">
-                            <div className="flex h-5 shrink-0 items-center">
-                              <div className="group grid size-4 grid-cols-1">
-                                <input
-                                  defaultValue={option.value}
-                                  defaultChecked={option.checked}
-                                  id={`filter-${section.id}-${optionIdx}`}
-                                  name={`${section.id}[]`}
-                                  type="checkbox"
-                                  className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
-                                />
-                                <svg
-                                  fill="none"
-                                  viewBox="0 0 14 14"
-                                  className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
-                                >
-                                  <path
-                                    d="M3 8L6 11L11 3.5"
-                                    strokeWidth={2}
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    className="opacity-0 group-has-checked:opacity-100"
+                        {section.options.map(
+                          (option: FilterOption, optionIdx: number) => (
+                            <div key={option.value} className="flex gap-3">
+                              <div className="flex h-5 shrink-0 items-center">
+                                <div className="group grid size-4 grid-cols-1">
+                                  <input
+                                    defaultValue={option.value}
+                                    defaultChecked={option.checked}
+                                    id={`filter-${section.id}-${optionIdx}`}
+                                    name={`${section.id}[]`}
+                                    type="checkbox"
+                                    className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
                                   />
-                                  <path
-                                    d="M3 7H11"
-                                    strokeWidth={2}
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    className="opacity-0 group-has-indeterminate:opacity-100"
-                                  />
-                                </svg>
+                                  <svg
+                                    fill="none"
+                                    viewBox="0 0 14 14"
+                                    className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
+                                  >
+                                    <path
+                                      d="M3 8L6 11L11 3.5"
+                                      strokeWidth={2}
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      className="opacity-0 group-has-checked:opacity-100"
+                                    />
+                                    <path
+                                      d="M3 7H11"
+                                      strokeWidth={2}
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      className="opacity-0 group-has-indeterminate:opacity-100"
+                                    />
+                                  </svg>
+                                </div>
                               </div>
+                              <label
+                                htmlFor={`filter-${section.id}-${optionIdx}`}
+                                className="text-sm text-gray-600"
+                              >
+                                {option.label}
+                              </label>
                             </div>
-                            <label
-                              htmlFor={`filter-${section.id}-${optionIdx}`}
-                              className="text-sm text-gray-600"
-                            >
-                              {option.label}
-                            </label>
-                          </div>
-                        ))}
+                          )
+                        )}
                       </div>
                     </DisclosurePanel>
                   </Disclosure>
@@ -391,6 +423,15 @@ function LandingPage() {
                         </div>
                       ))}
                     </div>
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                      <Pagination
+                        page={page}
+                        totalPages={totalPages}
+                        onPrev={handlePrev}
+                        onNext={handleNext}
+                      />
+                    )}
                   </div>
                 </div>
               </div>

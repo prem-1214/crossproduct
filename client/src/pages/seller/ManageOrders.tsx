@@ -21,7 +21,12 @@ export default function ManageOrders() {
     Cancelled: "bg-red-400 text-red-900",
   };
 
-  const statusList = ["Pending", "Shipped", "Delivered", "Cancelled"];
+  const statusList: Array<"Pending" | "Shipped" | "Delivered" | "Cancelled"> = [
+    "Pending",
+    "Shipped",
+    "Delivered",
+    "Cancelled",
+  ];
 
   if (isLoading) return <p>Loading orders...</p>;
 

@@ -13,7 +13,7 @@ export default function MyOrdersPage() {
   };
 
   if (isLoading) return <p className="text-center mt-12">Loading...</p>;
-  if (isError || !response.data?.orders)
+  if (isError || !response?.data?.orders)
     return (
       <p className="text-center mt-12 text-red-500">Could not load orders.</p>
     );

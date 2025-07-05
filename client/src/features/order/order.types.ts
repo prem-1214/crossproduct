@@ -6,7 +6,7 @@ export interface CheckoutInput {
     postalCode: string;
     country: string;
   };
-  paymentMethod: "COD" | "Stripe";
+  paymentMethod: "COD" | "UPI";
   products: { product: string; quantity: number }[];
   totalPrice: number;
 }

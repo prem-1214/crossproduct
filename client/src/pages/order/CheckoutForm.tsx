@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import type { CheckoutInput } from "@/features/order/order.types";
 import { clearCart } from "@/features/cart/cartSlice";
 
+type CheckoutFormInput = Omit<CheckoutInput, "products" | "totalPrice">;
 export default function CheckoutForm() {
   const cartItems = useAppSelector((state) => state.cart.items);
   const totalPrice = cartItems.reduce(
@@ -27,7 +28,7 @@ export default function CheckoutForm() {
     resolver: zodResolver(checkoutSchema),
   });
 
-  const onSubmit = async (data: CheckoutInput) => {
+  const onSubmit = async (data: CheckoutFormInput) => {
     try {
       const response = await placeOrder({
         ...data,
@@ -182,7 +183,7 @@ export default function CheckoutForm() {
             }`}
           >
             <option value="COD">Cash on Delivery</option>
-            <option value="Stripe">Stripe</option>
+            <option value="UPI">UPI</option>
           </select>
           {errors.paymentMethod && (
             <p className="text-sm text-red-600 mt-1">
