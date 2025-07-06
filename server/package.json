@@ -9,8 +9,6 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "postinstall": "npm ls typescript || npm install typescript",
-    "clean": "npx rimraf dist",
-    "build": "npm run clean && npx tsc",
     "start": "node dist/server.js"
   },
   "keywords": [],
