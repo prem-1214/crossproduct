@@ -7,11 +7,11 @@ export const connectDb = async () => {
     mongoose.connection.on("connected", () =>
       console.log("Database Connected...")
     );
-    mongoose.connection.on("error", (error) =>
+    mongoose.connection.on("error", (error: Error) =>
       console.log("error in connecting to database...", error)
     );
     await mongoose.connect(`${config.MONGO_URI as string}/${DB_NAME}`);
-  } catch (error) {
+  } catch (error: unknown) {
     console.log("error connecting db...", error);
     process.exit(1);
   }

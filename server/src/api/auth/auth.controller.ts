@@ -1,6 +1,6 @@
 import { AppError } from "../../utils/AppError";
 import { asyncHandler } from "../../utils/asyncHandler";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { sendSuccess } from "../../utils/responseHelper";
 import { User } from "../../models/users.models";
 import { LoginInput, RegisterInput } from "../../validations/auth.validation";

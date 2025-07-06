@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { asyncHandler } from "../utils/asyncHandler";
 import { AppError } from "../utils/AppError";
 import jwt from "jsonwebtoken";
 import { config } from "../config/config";

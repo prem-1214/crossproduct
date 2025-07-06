@@ -7,7 +7,7 @@ export function errorHandler(
   error: unknown,
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction // eslint-disable-line @typescript-eslint/no-unused-vars
 ): void {
   if (error instanceof AppError) {
      sendError(res, error.message, error.statusCode);

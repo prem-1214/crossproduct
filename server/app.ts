@@ -2,7 +2,6 @@ import express, { Application } from "express";
 import cors from "cors";
 import { errorHandler } from "./src//middlewares/errorHandler.middleware";
 import cookieParser from "cookie-parser";
-import { config } from "./src/config/config";
 import apiRouter from "./src/api/index";
 
 const app: Application = express();

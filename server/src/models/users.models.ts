@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, CallbackError } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { config } from "../config/config";
@@ -15,6 +15,7 @@ export interface Iuser extends Document {
   comparePassword(inputPassword: string): Promise<boolean>;
   generateAccessToken(): string;
   generateRefreshToken(): string;
+  isModified(path: string): boolean;
 }
 
 const userSchema = new Schema<Iuser>(
@@ -54,7 +55,7 @@ const userSchema = new Schema<Iuser>(
   {
     timestamps: true,
     toJSON: {
-      transform: function (doc, ret) {
+      transform: function (doc: Document, ret: Record<string, unknown>) {
         delete ret.password;
         delete ret.__v;
         return ret;
@@ -62,7 +63,7 @@ const userSchema = new Schema<Iuser>(
     },
     toObject: {
       // delete password from response and convert response to plainobject
-      transform: function (doc, ret) {
+      transform: function (doc: Document, ret: Record<string, unknown>) {
         delete ret.password;
         delete ret.__v;
         return ret;
@@ -72,7 +73,7 @@ const userSchema = new Schema<Iuser>(
 );
 
 // pre save hook to hash modified password before saving to db. if modified it will hash
-userSchema.pre("save", async function (this: Iuser, next) {
+userSchema.pre("save", async function (this: Iuser, next: (err?: CallbackError) => void) {
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 10);
   next();
