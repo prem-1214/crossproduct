@@ -9,6 +9,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "postinstall": "npm ls typescript || npm install typescript",
+    "build": "npx tsc",
     "start": "node dist/server.js"
   },
   "keywords": [],
