@@ -10,7 +10,6 @@
     "format": "prettier --write .",
     "postinstall": "npm ls typescript || npm install typescript",
     "clean": "npx rimraf dist",
-    "prebuild": "echo \"Verifying TypeScript...\" && npx tsc --version && echo \"Verifying @types/node...\" && npm ls @types/node",
     "build": "npm run clean && npx tsc",
     "start": "node dist/server.js"
   },
