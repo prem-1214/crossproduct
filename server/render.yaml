@@ -2,10 +2,15 @@ services:
   - type: web
     name: crossproduct-server
     env: node
-    buildCommand: npm install && npm run build
+    buildCommand: |
+      echo "Installing dependencies..."
+      npm install
+      echo "Building application..."
+      npm run build
+      echo "Build completed successfully"
     startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
-      - key: NODE_VERSION
-        value: "20"
+      - key: NODE_OPTIONS
+        value: "--max-old-space-size=4096"

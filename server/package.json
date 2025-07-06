@@ -8,7 +8,10 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "build": "tsc",
+    "postinstall": "npm ls typescript || npm install typescript",
+    "clean": "npx rimraf dist",
+    "prebuild": "echo \"Verifying TypeScript...\" && npx tsc --version && echo \"Verifying @types/node...\" && npm ls @types/node",
+    "build": "npm run clean && npx tsc",
     "start": "node dist/server.js"
   },
   "keywords": [],
@@ -28,15 +31,14 @@
     "typescript-eslint": "^8.35.1"
   },
   "dependencies": {
-    "@types/node": "^24.0.10",
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.9",
+    "@types/cors": "^2.8.19",
+    "@types/dotenv": "^6.1.1",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/bcrypt": "^5.0.2",
-    "@types/cors": "^2.8.19",
-    "@types/cookie-parser": "^1.4.9",
     "@types/multer": "^1.4.13",
-    "@types/dotenv": "^6.1.1",
-    "typescript": "^5.8.3",
+    "@types/node": "^24.0.10",
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.7.0",
     "cookie-parser": "^1.4.7",
@@ -49,6 +51,8 @@
     "mongoose": "^8.16.1",
     "multer": "^2.0.1",
     "multer-storage-cloudinary": "^2.2.1",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.8.3",
     "zod": "^3.25.74"
   }
 }
