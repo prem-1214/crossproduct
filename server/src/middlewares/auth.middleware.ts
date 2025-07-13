@@ -2,16 +2,12 @@ import { Request, Response, NextFunction } from "express";
 import { AppError } from "../utils/AppError";
 import jwt from "jsonwebtoken";
 import { config } from "../config/config";
-import { Iuser, User } from "../models/users.models";
+import { User } from "../models/users.models";
 import { sendError } from "../utils/responseHelper";
 
-export interface CustomRequest extends Request {
-  user?: Iuser;
-  token?: string;
-}
 
 export const authenticate = async (
-  req: CustomRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
@@ -44,7 +40,7 @@ export const authenticate = async (
 
 export const checkRole =
   (...roles: Array<"user" | "seller" | "admin">) =>
-  (req: CustomRequest, res: Response, next: NextFunction) => {
+  (req: Request, res: Response, next: NextFunction) => {
     const role = req?.user?.role;
 
     if (!role || !roles.includes(role)) {

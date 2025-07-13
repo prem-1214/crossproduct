@@ -38,7 +38,7 @@ function OrderSummary() {
         <strong className="font-mono text-gray-800">{order._id}</strong>
       </p>
       <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-4 text-gray-800">Products</h2>
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">Product</h2>
         <ul className="divide-y divide-gray-200">
           {order.products.map((item) => (
             <li

@@ -1,3 +1,5 @@
+// Load type augmentations
+import "./src/types";
 import express, { Application } from "express";
 import cors from "cors";
 import { errorHandler } from "./src//middlewares/errorHandler.middleware";
