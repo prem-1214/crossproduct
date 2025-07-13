@@ -1,10 +1,19 @@
 import { Request, Response } from "express";
 import { Product } from "../../models/product.model";
 import { asyncHandler } from "../../utils/asyncHandler";
-import { sendSuccess } from "../../utils/responseHelper";
 import { AppError } from "../../utils/AppError";
-import { ProductInput } from "../../validations/product.validation";
+import { sendSuccess } from "../../utils/responseHelper";
 import { uploadOnCloudinary } from "../../utils/cloudinaryUploader";
+
+// Define ProductInput interface
+interface ProductInput {
+  productName: string;
+  description: string;
+  price: number;
+  category: string;
+  stock: number;
+  brand?: string;
+}
 
 // Create product (Seller Only)
 export const addProduct = asyncHandler(async (req: Request, res: Response) => {
@@ -37,24 +46,11 @@ export const addProduct = asyncHandler(async (req: Request, res: Response) => {
   return sendSuccess(res, 201, "Product created successfully", product);
 });
 
-// specific to seller only (seller)
-export const getmyProducts = asyncHandler(
-  async (req: Request, res: Response) => {
-    const seller = req.user?._id as string;
-    console.log("seller", seller);
-    if (!seller) throw new AppError("seller not found", 500);
-    const myProducts = await Product.find({ seller: seller });
-    console.log("myProducts ...", myProducts);
-
-    return sendSuccess(res, 200, "all products fetched", myProducts);
-  }
-);
-
 // Get all products (public)
 export const getAllProducts = asyncHandler(
   async (req: Request, res: Response) => {
-    const page = parseInt(req.params.page as string) || 1;
-    const limit = parseInt(req.params.limit as string) || 30;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 30;
     const skip = (page - 1) * 30;
 
     // fetch total products by counting the entries
@@ -70,6 +66,19 @@ export const getAllProducts = asyncHandler(
     };
 
     return sendSuccess(res, 200, "Product list", productResponse);
+  }
+);
+
+// specific to seller only (seller)
+export const getmyProducts = asyncHandler(
+  async (req: Request, res: Response) => {
+    const seller = req.user?._id as string;
+    console.log("seller", seller);
+    if (!seller) throw new AppError("seller not found", 500);
+    const myProducts = await Product.find({ seller: seller });
+    console.log("myProducts ...", myProducts);
+
+    return sendSuccess(res, 200, "all products fetched", myProducts);
   }
 );
 

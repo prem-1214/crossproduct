@@ -20,4 +20,11 @@ export default defineConfig([
       "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     },
   },
+  {
+    // Allow namespaces in type declaration files
+    files: ["src/types/**/*.ts", "**/*.d.ts"],
+    rules: {
+      "@typescript-eslint/no-namespace": "off",
+    },
+  },
 ]);
