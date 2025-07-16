@@ -3,7 +3,7 @@ import { config as conf } from "dotenv";
 conf();
 
 const _config = {
-  PORT: process.env.PORT,
+  PORT: parseInt(process.env.PORT as string) || 3000,
   MONGO_URI: process.env.MONGO_URI as string,
   FRONTEND_URI: (process.env.FRONTEND_URI as string) || "http://localhost:5173",
   NODE_ENV: process.env.NODE_ENV as string,

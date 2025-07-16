@@ -2,9 +2,10 @@ services:
   - type: web
     name: crossproduct-server
     env: node
+    runtime: node
     buildCommand: |
       echo "Installing dependencies..."
-      npm install
+      npm ci
       echo "Building application..."
       npm run build
       echo "Build completed successfully"
@@ -14,3 +15,5 @@ services:
         value: production
       - key: NODE_OPTIONS
         value: "--max-old-space-size=4096"
+      - key: PORT
+        value: 10000
