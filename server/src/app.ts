@@ -1,9 +1,9 @@
-import "./src/types";
+import "./types";
 import express, { Application } from "express";
 import cors from "cors";
-import { errorHandler } from "./src//middlewares/errorHandler.middleware";
+import { errorHandler } from "./middlewares/errorHandler.middleware";
 import cookieParser from "cookie-parser";
-import apiRouter from "./src/api/index";
+import apiRouter from "./api/index";
 
 const app: Application = express();
 

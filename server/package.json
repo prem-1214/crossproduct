@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/server.js",
   "scripts": {
     "dev": "nodemon server.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -41,6 +41,12 @@
     "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
-    "zod": "^3.25.74"
+    "zod": "^3.25.74",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.0.10",
+    "@types/cors": "^2.8.19",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/cookie-parser": "^1.4.9",
+    "@types/multer": "^1.4.13"
   }
 }

@@ -1,6 +1,6 @@
 import { app } from "./app";
-import { config } from "./src/config/config";
-import { connectDb } from "./src/db/index";
+import { config } from "./config/config";
+import { connectDb } from "./db";
 
 (async () => {
   try {
