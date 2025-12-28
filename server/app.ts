@@ -10,7 +10,7 @@ const app: Application = express();
 
 app.use(
   cors({
-    origin: "https://crossproduct.vercel.app/",
+    origin: "https://crossproduct.vercel.app",
     credentials: true,
     exposedHeaders: ["Authorization"],
   })
